@@ -1,5 +1,6 @@
 import 'package:flutter_force_permission/permission_item_config.dart';
 
+/// Configuration for Flutter Force Permission.
 class FlutterForcePermissionConfig {
   FlutterForcePermissionConfig({
     required this.title,
