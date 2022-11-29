@@ -1,7 +1,9 @@
 library flutter_force_permission;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+import 'package:flutter_force_permission/flutter_force_permission_config.dart';
+
+class FlutterForcePermission {
+  FlutterForcePermission(this.config);
+
+  final FlutterForcePermissionConfig config;
 }
