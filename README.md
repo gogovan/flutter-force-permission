@@ -4,7 +4,7 @@ Show permission disclosure page and allows required permissions before user can 
 This package shows a prominent in-app disclosure page for getting permissions as required by [Google Play](https://support.google.com/googleplay/android-developer/answer/9799150?visit_id=638041800350153935-369621111&p=pd-m&rd=1#prominent_disclosure&zippy=%2Cstep-provide-prominent-in-app-disclosure%2Cstep-review-best-practices-for-accessing-location%2Cstep-consider-alternatives-to-accessing-location-in-the-background%2Cstep-make-access-to-location-in-the-background-clear-to-users%2Csee-an-example-of-prominent-in-app-disclosure).
 Also support iOS to ensure a consistent experience.
 
-In addition, permissions can be set as "required". If this is set, those required permissions will be required and if users reject it, 
+In addition, permissions can be set as "required". If this is set, those required permissions will be required and if users denied it, 
 this package will show a custom dialog and redirect user to the appropriate settings page provided by the OS.
 
 ## Setup
@@ -24,7 +24,7 @@ final perm = FlutterForcePermission(
       title: 'Title',
       permissionItemConfigs: [
         PermissionItemConfig(
-          permission: Permission.locationWhenInUse,
+          permission: [Permission.locationWhenInUse],
           title: 'Foreground Location',
           rationaleText: 'Rationale for Foreground location.',
           icon: const Icon(Icons.location_on_outlined),
@@ -33,7 +33,7 @@ final perm = FlutterForcePermission(
           'Please enable location permission for proper usage.',
         ),
         PermissionItemConfig(
-          permission: Permission.locationAlways,
+          permission: [Permission.locationAlways, Permission.location],
           title: 'Background Location',
           rationaleText: 'Rationale for Background location.',
           icon: const Icon(Icons.location_on),
