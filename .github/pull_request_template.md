@@ -6,3 +6,6 @@ Describe your changes.
 
 #### Any screenshot for this change?
 Post any screenshots for your feature, if any.
+
+#### Checklist
+- [ ] Run the `pre_pr.sh` script to ensure code quality.

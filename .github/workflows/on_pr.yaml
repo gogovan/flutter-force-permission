@@ -1,0 +1,25 @@
+name: On PR check
+
+on: [pull_request]
+
+jobs:
+  code-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check code is formatted
+        run: flutter format --output=none --set-exit-if-changed
+
+      - name: Analyze code
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Dart Code Metrics Analysis
+        run: flutter pub run dart_code_metrics:metrics analyze lib --fatal-style --fatal-warnings --fatal-performance --set-exit-on-violation-level=warning
+
+      - name: Run tests
+        run: flutter test
