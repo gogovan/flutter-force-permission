@@ -259,7 +259,6 @@ dart_code_metrics:
     - avoid-returning-widgets # Warns when a method, function or getter returns a Widget or subclass of a Widget.
     - avoid-shrink-wrap-in-lists # Warns when a ListView widget with shrinkWrap parameter is wrapped in a Column, Row or another ListView widget.
     - avoid-unnecessary-setstate # Warns when setState is called inside initState, didUpdateWidget or build methods and when it's called from a sync method that is called inside those methods.
-    - avoid-use-expanded-as-spacer # The rule detects Expanded widgets that contain empty SizedBox/Container and proposes to replace them with the Spacer widget.
     - avoid-wrapping-in-padding # Warns when a widget is wrapped in a Padding widget but has a padding settings by itself.
     - prefer-const-border-radius # BorderRadius.circular constructor calls const BorderRadius.all constructor under the hood. This rule allows to replace BorderRadius.circular(value) with const BorderRadius.all(Radius.circular(value)) if radius is a constant value.
     - prefer-correct-edge-insets-constructor # If any value, passed to EdgeInsets.fromLTRB, equals 0, then EdgeInsets.fromLTRB should be replaced with EdgeInsets.only passing all non-zero values. If passed values are symmetric, then EdgeInsets.fromLTRB or EdgeInsets.only should be replaced with EdgeInsets.symmetric.
