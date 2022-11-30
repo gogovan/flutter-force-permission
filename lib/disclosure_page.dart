@@ -114,5 +114,7 @@ class DisclosurePage extends StatelessWidget {
     );
   }
 
-  void _onGrantPermission() {}
+  void _onGrantPermission() {
+    
+  }
 }

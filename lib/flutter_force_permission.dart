@@ -22,14 +22,24 @@ class FlutterForcePermission {
   /// Returns a map of Permission and their status. Refer to [permission_handler](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/PermissionStatus.html) for return values.
   /// Only requested permissions will be included in the return value.
   Future<Map<Permission, PermissionStatus>> show(BuildContext context) async {
+    final navigator = Navigator.of(context);
+
     final permissionStatuses = await getPermissionStatuses();
 
     if (permissionStatuses.values.every((element) => element.isGranted)) {
+      // TODO(peter): check if soft permissions are asked.
       // All permissions granted, no need to show disclosure page.
       return permissionStatuses;
     }
 
-    return showDisclosurePage(context);
+    // ignore: avoid-ignoring-return-values, not needed.
+    await navigator.push(
+      MaterialPageRoute(
+        builder: (context) => DisclosurePage(forcePermission: this),
+      ),
+    );
+
+    return getPermissionStatuses();
   }
 
   /// Get all permission statuses.
@@ -47,19 +57,5 @@ class FlutterForcePermission {
     }
 
     return result;
-  }
-
-  Future<Map<Permission, PermissionStatus>> showDisclosurePage(
-    BuildContext context,
-  ) async {
-    // ignore: avoid-ignoring-return-values, not needed.
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DisclosurePage(forcePermission: this),
-      ),
-    );
-
-    return getPermissionStatuses();
   }
 }
