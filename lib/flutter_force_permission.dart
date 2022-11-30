@@ -19,12 +19,20 @@ class FlutterForcePermission {
   /// Returns a map of Permission and their status, using permission_handler interfaces.
   /// Only requested permissions will be included in the return value.
   Future<Map<Permission, PermissionStatus>> show() async {
-    final permissionStatuses = _getPermissionStatuses();
+    final permissionStatuses = await _getPermissionStatuses();
 
-    return {};
+    return permissionStatuses;
   }
 
-  Map<Permission, PermissionStatus> _getPermissionStatuses() {
-    return {};
+  Future<Map<Permission, PermissionStatus>> _getPermissionStatuses() async {
+    final Map<Permission, PermissionStatus> result = {};
+    for (final List<Permission> perms in config.permissionItemConfigs.map((e) => e.permission)) {
+      for (final Permission perm in perms) {
+        final status = await perm.status;
+        result[perm] = status;
+      }
+    }
+
+    return result;
   }
 }
