@@ -5,7 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 class PermissionItemConfig {
   PermissionItemConfig({
     required this.permission,
-    required this.title,
+    required this.header,
     required this.rationaleText,
     this.icon,
     this.required = false,
@@ -20,11 +20,11 @@ class PermissionItemConfig {
   final List<Permission> permission;
 
   /// Title for the permission item.
-  final String title;
+  final String header;
 
   /// The Icon for the permission item.
   ///
-  /// If omitted, a Material Icon appropriate for the permission will be used.
+  /// If omitted, a Material Icon appropriate for the permission colored with Primary color of the current theme will be used.
   final Icon? icon;
 
   /// Detailed text for the permission.

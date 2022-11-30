@@ -1,5 +1,8 @@
 library flutter_force_permission;
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_force_permission/disclosure_page.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -16,17 +19,27 @@ class FlutterForcePermission {
   /// Show disclosure page.
   ///
   /// This will show the disclosure page according to the provided configuration, and handles requesting permissions.
-  /// Returns a map of Permission and their status, using permission_handler interfaces.
+  /// Returns a map of Permission and their status. Refer to [permission_handler](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/PermissionStatus.html) for return values.
   /// Only requested permissions will be included in the return value.
-  Future<Map<Permission, PermissionStatus>> show() async {
-    final permissionStatuses = await _getPermissionStatuses();
+  Future<Map<Permission, PermissionStatus>> show(BuildContext context) async {
+    final permissionStatuses = await getPermissionStatuses();
 
-    return permissionStatuses;
+    if (permissionStatuses.values.every((element) => element.isGranted)) {
+      // All permissions granted, no need to show disclosure page.
+      return permissionStatuses;
+    }
+
+    return showDisclosurePage(context);
   }
 
-  Future<Map<Permission, PermissionStatus>> _getPermissionStatuses() async {
+  /// Get all permission statuses.
+  ///
+  /// Only permissions appearing in the configuration will be queried and returned.
+  /// Refer to [permission_handler](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/PermissionStatus.html) for return values.
+  Future<Map<Permission, PermissionStatus>> getPermissionStatuses() async {
     final Map<Permission, PermissionStatus> result = {};
-    for (final List<Permission> perms in config.permissionItemConfigs.map((e) => e.permission)) {
+    for (final List<Permission> perms
+        in config.permissionItemConfigs.map((e) => e.permission)) {
       for (final Permission perm in perms) {
         final status = await perm.status;
         result[perm] = status;
@@ -34,5 +47,19 @@ class FlutterForcePermission {
     }
 
     return result;
+  }
+
+  Future<Map<Permission, PermissionStatus>> showDisclosurePage(
+    BuildContext context,
+  ) async {
+    // ignore: avoid-ignoring-return-values, not needed.
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DisclosurePage(forcePermission: this),
+      ),
+    );
+
+    return getPermissionStatuses();
   }
 }
