@@ -125,7 +125,7 @@ class DisclosurePage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
-              onPressed: _onGrantPermission,
+              onPressed: () => _onGrantPermission(context),
               child: Text(forcePermission.config.confirmText),
             ),
           ),
@@ -134,10 +134,15 @@ class DisclosurePage extends StatelessWidget {
     );
   }
 
-  Future<void> _onGrantPermission() async {
+  Future<void> _onGrantPermission(BuildContext context) async {
+    final navigator = Navigator.of(context);
+
     for (final PermissionItemConfig perm
         in forcePermission.config.permissionItemConfigs) {
-      final status = await perm.permission.request();
+      // ignore: avoid-ignoring-return-values, not needed.
+      await perm.permission.request();
     }
+
+    navigator.pop();
   }
 }
