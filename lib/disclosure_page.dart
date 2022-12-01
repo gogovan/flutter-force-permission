@@ -57,7 +57,9 @@ class DisclosurePage extends StatelessWidget {
                         Icons.location_on,
                         color: Theme.of(context).primaryColor,
                       );
-                    } else if (perm.value == Permission.activityRecognition.value) {
+                    } else if (perm.value ==
+                            Permission.activityRecognition.value ||
+                        perm.value == Permission.sensors.value) {
                       icon = Icon(
                         Icons.directions_run,
                         color: Theme.of(context).primaryColor,
@@ -114,9 +116,9 @@ class DisclosurePage extends StatelessWidget {
   }
 
   Future<void> _onGrantPermission() async {
-    for (final PermissionItemConfig perm in forcePermission.config.permissionItemConfigs) {
+    for (final PermissionItemConfig perm
+        in forcePermission.config.permissionItemConfigs) {
       final status = await perm.permission.request();
-
     }
   }
 }
