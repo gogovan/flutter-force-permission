@@ -16,7 +16,7 @@ class PermissionItemConfig {
   ///
   /// If multiple permissions are provided, this item will cover all of them.
   /// Refer to the constants of the Permission in [permission_handler plugin](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/Permission-class.html).
-  /// Currently, only supports location, locationAlways, locationWhenInUse, notification, sensors, activityRecognition.
+  /// Currently, only supports location, locationAlways, locationWhenInUse, notification, activityRecognition.
   final List<Permission> permission;
 
   /// Title for the permission item.

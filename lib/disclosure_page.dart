@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission.dart';
+import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DisclosurePage extends StatelessWidget {
@@ -56,8 +57,7 @@ class DisclosurePage extends StatelessWidget {
                         Icons.location_on,
                         color: Theme.of(context).primaryColor,
                       );
-                    } else if (perm.value == Permission.sensors.value ||
-                        perm.value == Permission.activityRecognition.value) {
+                    } else if (perm.value == Permission.activityRecognition.value) {
                       icon = Icon(
                         Icons.directions_run,
                         color: Theme.of(context).primaryColor,
@@ -65,8 +65,7 @@ class DisclosurePage extends StatelessWidget {
                     } else {
                       if (kDebugMode) {
                         print(
-                          '[FlutterForcePermission] WARN: unsupported permission ${item
-                              .permission} found.',
+                          '[FlutterForcePermission] WARN: unsupported permission ${item.permission} found.',
                         );
                       }
                       icon = Icon(
@@ -114,7 +113,10 @@ class DisclosurePage extends StatelessWidget {
     );
   }
 
-  void _onGrantPermission() {
-    
+  Future<void> _onGrantPermission() async {
+    for (final PermissionItemConfig perm in forcePermission.config.permissionItemConfigs) {
+      final status = await perm.permission.request();
+
+    }
   }
 }

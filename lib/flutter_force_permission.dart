@@ -22,8 +22,11 @@ class FlutterForcePermission {
   /// Returns a map of Permission and their status. Refer to [permission_handler](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/PermissionStatus.html) for return values.
   /// Only requested permissions will be included in the return value.
   Future<Map<Permission, PermissionStatus>> show(BuildContext context) async {
+    // Obtain navigator before any await call to avoid storing BuildContext across async gaps.
+    // https://stackoverflow.com/a/69512692
     final navigator = Navigator.of(context);
 
+    // Check for permissions.
     final permissionStatuses = await getPermissionStatuses();
 
     if (permissionStatuses.values.every((element) => element.isGranted)) {
@@ -32,6 +35,7 @@ class FlutterForcePermission {
       return permissionStatuses;
     }
 
+    // Navigate to disclosure page.
     // ignore: avoid-ignoring-return-values, not needed.
     await navigator.push(
       MaterialPageRoute(
