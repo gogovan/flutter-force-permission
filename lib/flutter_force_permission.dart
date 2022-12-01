@@ -19,8 +19,8 @@ class FlutterForcePermission {
   /// Show disclosure page.
   ///
   /// This will show the disclosure page according to the provided configuration, and handles requesting permissions.
-  /// Returns a map of Permission and their status. Refer to [permission_handler](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/PermissionStatus.html) for return values.
-  /// Only requested permissions will be included in the return value.
+  /// Returns a map of Permission and their status after requesting the permissions. Refer to [permission_handler](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/PermissionStatus.html) for return values.
+  /// Only permissions specified in the configuration will be included in the return value.
   Future<Map<Permission, PermissionStatus>> show(BuildContext context) async {
     // Obtain navigator before any await call to avoid storing BuildContext across async gaps.
     // https://stackoverflow.com/a/69512692
@@ -48,12 +48,12 @@ class FlutterForcePermission {
 
   /// Get all permission statuses.
   ///
-  /// Only permissions appearing in the configuration will be queried and returned.
+  /// Only permissions specified in the configuration will be queried and returned.
   /// Refer to [permission_handler](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/PermissionStatus.html) for return values.
   Future<Map<Permission, PermissionStatus>> getPermissionStatuses() async {
     final Map<Permission, PermissionStatus> result = {};
     for (final List<Permission> perms
-        in config.permissionItemConfigs.map((e) => e.permission)) {
+        in config.permissionItemConfigs.map((e) => e.permissions)) {
       for (final Permission perm in perms) {
         final status = await perm.status;
         result[perm] = status;

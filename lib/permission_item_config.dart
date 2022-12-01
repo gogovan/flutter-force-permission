@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 /// Configuration for each item in the disclosure page and requested permissions.
 class PermissionItemConfig {
   PermissionItemConfig({
-    required this.permission,
+    required this.permissions,
     required this.header,
     required this.rationaleText,
     this.icon,
@@ -17,7 +17,7 @@ class PermissionItemConfig {
   /// If multiple permissions are provided, this item will cover all of them.
   /// Refer to the constants of the Permission in [permission_handler plugin](https://pub.dev/documentation/permission_handler_platform_interface/latest/permission_handler_platform_interface/Permission-class.html).
   /// Currently, only supports location, locationAlways, locationWhenInUse, notification, activityRecognition, sensors.
-  final List<Permission> permission;
+  final List<Permission> permissions;
 
   /// Title for the permission item.
   final String header;

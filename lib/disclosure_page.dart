@@ -45,7 +45,7 @@ class DisclosurePage extends StatelessWidget {
                       forcePermission.config.permissionItemConfigs[index - 1];
                   var icon = item.icon;
                   if (icon == null) {
-                    final perm = item.permission.first;
+                    final perm = item.permissions.first;
                     if (perm.value == Permission.notification.value) {
                       icon = Icon(
                         Icons.notifications_none,
@@ -73,7 +73,7 @@ class DisclosurePage extends StatelessWidget {
                     } else {
                       if (kDebugMode) {
                         print(
-                          '[FlutterForcePermission] WARN: unsupported permission ${item.permission} found.',
+                          '[FlutterForcePermission] WARN: unsupported permission ${item.permissions} found.',
                         );
                       }
                       icon = Icon(
@@ -137,10 +137,12 @@ class DisclosurePage extends StatelessWidget {
   Future<void> _onGrantPermission(BuildContext context) async {
     final navigator = Navigator.of(context);
 
-    for (final PermissionItemConfig perm
+    for (final PermissionItemConfig permConfig
         in forcePermission.config.permissionItemConfigs) {
-      // ignore: avoid-ignoring-return-values, not needed.
-      await perm.permission.request();
+      for (final Permission perm in permConfig.permissions) {
+        // ignore: avoid-ignoring-return-values, not needed.
+        await perm.request();
+      }
     }
 
     navigator.pop();
