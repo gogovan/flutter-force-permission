@@ -4,8 +4,14 @@ import 'package:flutter_force_permission/flutter_force_permission.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+/// Disclosure page.
+///
+/// Shown when there are any permissions that need users to grant.
 class DisclosurePage extends StatelessWidget {
   const DisclosurePage({super.key, required this.forcePermission});
+
+  /// Maximum number of lines for title and rationale for each permission item.
+  static const maxLines = 9;
 
   final FlutterForcePermission forcePermission;
 
@@ -82,18 +88,31 @@ class DisclosurePage extends StatelessWidget {
                       children: [
                         icon,
                         const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.header,
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
-                            Text(
-                              item.rationaleText,
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ),
-                          ],
+                        Flexible(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  item.header,
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: maxLines,
+                                ),
+                              ),
+                              Flexible(
+                                child: Text(
+                                  item.rationaleText,
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: maxLines,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
