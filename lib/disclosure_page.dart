@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission.dart';
+import 'package:flutter_force_permission/flutter_force_permission_util.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Disclosure page.
 ///
@@ -136,12 +138,17 @@ class DisclosurePage extends StatelessWidget {
 
   Future<void> _onGrantPermission(BuildContext context) async {
     final navigator = Navigator.of(context);
+    final prefs = await SharedPreferences.getInstance();
 
+    // Request permissions one by one because in some cases requesting
+    // multiple permissions does not ask the user as expected.
     for (final PermissionItemConfig permConfig
         in forcePermission.config.permissionItemConfigs) {
       for (final Permission perm in permConfig.permissions) {
         // ignore: avoid-ignoring-return-values, not needed.
         await perm.request();
+        // ignore: avoid-ignoring-return-values, not needed.
+        await prefs.setBool(getRequestedKey(perm), true);
       }
     }
 

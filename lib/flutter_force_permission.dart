@@ -1,6 +1,5 @@
 library flutter_force_permission;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/disclosure_page.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
