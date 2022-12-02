@@ -1,3 +1,5 @@
+library flutter_force_permission;
+
 import 'package:flutter_force_permission/permission_item_config.dart';
 
 /// Configuration for Flutter Force Permission.

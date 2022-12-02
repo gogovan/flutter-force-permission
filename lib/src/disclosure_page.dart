@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission.dart';
-import 'package:flutter_force_permission/flutter_force_permission_util.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
+import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

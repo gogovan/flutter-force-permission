@@ -1,3 +1,5 @@
+library flutter_force_permission;
+
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 

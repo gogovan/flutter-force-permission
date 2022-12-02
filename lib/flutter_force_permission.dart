@@ -1,8 +1,8 @@
 library flutter_force_permission;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_force_permission/disclosure_page.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
+import 'package:flutter_force_permission/src/disclosure_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Flutter Force Permission
