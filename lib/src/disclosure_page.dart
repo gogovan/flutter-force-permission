@@ -148,7 +148,7 @@ class DisclosurePage extends StatelessWidget {
         // ignore: avoid-ignoring-return-values, not needed.
         await perm.request();
         // ignore: avoid-ignoring-return-values, not needed.
-        await prefs.setBool(getRequestedKey(perm), true);
+        await prefs.setBool(getRequestedPrefKey(perm), true);
       }
     }
 

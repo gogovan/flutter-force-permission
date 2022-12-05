@@ -3,7 +3,9 @@ library flutter_force_permission;
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/src/disclosure_page.dart';
+import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Flutter Force Permission
 ///
@@ -29,8 +31,15 @@ class FlutterForcePermission {
     final permissionStatuses = await getPermissionStatuses();
 
     if (permissionStatuses.values.every((element) => element.isGranted)) {
-      // TODO(peter): check if soft permissions are asked.
       // All permissions granted, no need to show disclosure page.
+      return permissionStatuses;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final requested = permissionStatuses.keys
+        .map((e) => prefs.getBool(getRequestedPrefKey(e)));
+    if (requested.every((element) => element ?? false)) {
+      // All permissions requested, no need to show disclosure page.
       return permissionStatuses;
     }
 
@@ -42,6 +51,7 @@ class FlutterForcePermission {
       ),
     );
 
+    // Check for permission status again as it is likely to be updated.
     return getPermissionStatuses();
   }
 
