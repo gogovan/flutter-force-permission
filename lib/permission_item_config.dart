@@ -1,6 +1,7 @@
 library flutter_force_permission;
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_force_permission/forced_permission_dialog_config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Configuration for each item in the disclosure page and requested permissions.
@@ -11,7 +12,7 @@ class PermissionItemConfig {
     required this.rationaleText,
     this.icon,
     this.required = false,
-    this.forcedPermissionDialogText = '',
+    this.forcedPermissionDialogConfig,
   });
 
   /// The Permission to request.
@@ -37,10 +38,10 @@ class PermissionItemConfig {
 
   /// Whether these permissions are required.
   ///
-  /// If it is required, users cannot migrate out of disclosure page until the permission is granted.
+  /// If it is required, users cannot migrate out of disclosure page until the permission is granted. `forcedPermissionDialogConfig` should include configuration for the
+  /// dialog shown when required permission are denied.
   final bool required;
 
-  /// For required permissions, the text shown for the dialog when requesting users to go to Settings page.
-  final String forcedPermissionDialogText;
-
+  /// Configuration for the dialog shown when this permission is denied and the permission is required.
+  final ForcedPermissionDialogConfig? forcedPermissionDialogConfig;
 }

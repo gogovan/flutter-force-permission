@@ -147,11 +147,47 @@ class DisclosurePage extends StatelessWidget {
       for (final Permission perm in permConfig.permissions) {
         // ignore: avoid-ignoring-return-values, not needed.
         await perm.request();
+
+        if (permConfig.required) {
+          final permStatus = await perm.status;
+          if (permStatus != PermissionStatus.granted) {
+            // ignore: avoid-ignoring-return-values, not needed.
+            await showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async => false,
+                child: AlertDialog(
+                  title: Text(
+                    permConfig.forcedPermissionDialogConfig?.title ?? '',
+                  ),
+                  content:
+                      Text(permConfig.forcedPermissionDialogConfig?.text ?? ''),
+                  actions: [
+                    TextButton(
+                      onPressed: _showSettings,
+                      child: Text(
+                        permConfig.forcedPermissionDialogConfig?.buttonText ??
+                            '',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        }
+
         // ignore: avoid-ignoring-return-values, not needed.
         await prefs.setBool(getRequestedPrefKey(perm), true);
       }
     }
 
     navigator.pop();
+  }
+
+  void _showSettings() {
+    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
+    openAppSettings();
   }
 }
