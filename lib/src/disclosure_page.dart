@@ -165,7 +165,7 @@ class DisclosurePage extends StatelessWidget {
                       Text(permConfig.forcedPermissionDialogConfig?.text ?? ''),
                   actions: [
                     TextButton(
-                      onPressed: _showSettings,
+                      onPressed: () => _showSettings(context, perm),
                       child: Text(
                         permConfig.forcedPermissionDialogConfig?.buttonText ??
                             '',
@@ -186,8 +186,17 @@ class DisclosurePage extends StatelessWidget {
     navigator.pop();
   }
 
-  void _showSettings() {
-    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
-    openAppSettings();
+  Future<void> _showSettings(BuildContext context, Permission perm) async {
+    final navigator = Navigator.of(context, rootNavigator: true);
+
+    while (true) {
+      // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
+      await openAppSettings();
+
+      final granted = await perm.status.isGranted;
+      if (granted) break;
+    }
+
+    navigator.pop();
   }
 }
