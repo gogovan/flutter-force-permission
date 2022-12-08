@@ -36,10 +36,22 @@ class FlutterForcePermission {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    final requested = permissionStatuses.keys
-        .map((e) => prefs.getBool(getRequestedPrefKey(e)));
-    if (requested.every((element) => element ?? false)) {
-      // All permissions requested, no need to show disclosure page.
+    var needShow = false;
+    for (final permConfig in config.permissionItemConfigs) {
+      for (final perm in permConfig.permissions) {
+        final requested = prefs.getBool(getRequestedPrefKey(perm));
+        if (requested != true) {
+          needShow = true;
+          break;
+        }
+        if (permissionStatuses[perm] != PermissionStatus.granted && permConfig.required) {
+          needShow = true;
+          break;
+        }
+      }
+    }
+
+    if (!needShow) {
       return permissionStatuses;
     }
 
