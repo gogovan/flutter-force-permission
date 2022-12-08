@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission.dart';
@@ -9,21 +12,54 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Disclosure page.
 ///
 /// Shown when there are any permissions that need users to grant.
-class DisclosurePage extends StatelessWidget {
+class DisclosurePage extends StatefulWidget {
   const DisclosurePage({super.key, required this.forcePermission});
 
-  /// Maximum number of lines for title and rationale for each permission item.
-  static const maxLines = 9;
+  /// Maximum number of lines displayed for title and rationale for each permission item.
+  static const maxLines = 3;
 
   final FlutterForcePermission forcePermission;
 
   @override
+  State<DisclosurePage> createState() => _DisclosurePageState();
+}
+
+class _DisclosurePageState extends State<DisclosurePage>
+// ignore: prefer_mixin, WidgetsBindingObserver is Framework code
+    with WidgetsBindingObserver {
+  StreamController<bool> resumed = StreamController.broadcast();
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      resumed.add(true);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    // ignore: avoid-ignoring-return-values, not needed.
+    WidgetsBinding.instance.removeObserver(this);
+    // ignore: avoid-ignoring-return-values, not needed.
+    resumed.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final permConfig = widget.forcePermission.config;
+
     final titleWidget = Column(
       children: [
         const SizedBox(height: 64),
         Text(
-          forcePermission.config.title,
+          permConfig.title,
           style: Theme.of(context).textTheme.headline6,
         ),
         const SizedBox(height: 16),
@@ -37,14 +73,13 @@ class DisclosurePage extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(32),
-              itemCount:
-                  forcePermission.config.permissionItemConfigs.length + 1,
+              itemCount: permConfig.permissionItemConfigs.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return titleWidget;
                 } else {
-                  final item =
-                      forcePermission.config.permissionItemConfigs[index - 1];
+                  final item = widget
+                      .forcePermission.config.permissionItemConfigs[index - 1];
                   var icon = item.icon;
                   if (icon == null) {
                     final perm = item.permissions.first;
@@ -101,7 +136,7 @@ class DisclosurePage extends StatelessWidget {
                                   style: Theme.of(context).textTheme.subtitle1,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines: maxLines,
+                                  maxLines: DisclosurePage.maxLines,
                                 ),
                               ),
                               Flexible(
@@ -110,7 +145,7 @@ class DisclosurePage extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodyText2,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines: maxLines,
+                                  maxLines: DisclosurePage.maxLines,
                                 ),
                               ),
                             ],
@@ -128,7 +163,7 @@ class DisclosurePage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => _onGrantPermission(context),
-              child: Text(forcePermission.config.confirmText),
+              child: Text(widget.forcePermission.config.confirmText),
             ),
           ),
         ],
@@ -143,38 +178,18 @@ class DisclosurePage extends StatelessWidget {
     // Request permissions one by one because in some cases requesting
     // multiple permissions does not ask the user as expected.
     for (final PermissionItemConfig permConfig
-        in forcePermission.config.permissionItemConfigs) {
+        in widget.forcePermission.config.permissionItemConfigs) {
       for (final Permission perm in permConfig.permissions) {
         // ignore: avoid-ignoring-return-values, not needed.
         await perm.request();
 
         if (permConfig.required) {
-          final permStatus = await perm.status;
-          if (permStatus != PermissionStatus.granted) {
+          var permStatus = await perm.status;
+          while (permStatus != PermissionStatus.granted) {
+            await _showRequiredPermDialog(permConfig);
             // ignore: avoid-ignoring-return-values, not needed.
-            await showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => WillPopScope(
-                onWillPop: () async => false,
-                child: AlertDialog(
-                  title: Text(
-                    permConfig.forcedPermissionDialogConfig?.title ?? '',
-                  ),
-                  content:
-                      Text(permConfig.forcedPermissionDialogConfig?.text ?? ''),
-                  actions: [
-                    TextButton(
-                      onPressed: () => _showSettings(context, perm),
-                      child: Text(
-                        permConfig.forcedPermissionDialogConfig?.buttonText ??
-                            '',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+            await resumed.stream.firstWhere((element) => element);
+            permStatus = await perm.status;
           }
         }
 
@@ -186,16 +201,38 @@ class DisclosurePage extends StatelessWidget {
     navigator.pop();
   }
 
-  Future<void> _showSettings(BuildContext context, Permission perm) async {
-    final navigator = Navigator.of(context, rootNavigator: true);
+  Future<void> _showRequiredPermDialog(PermissionItemConfig permConfig) async {
+    // ignore: avoid-ignoring-return-values, not needed.
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text(
+            permConfig.forcedPermissionDialogConfig?.title ?? '',
+          ),
+          content: Text(
+            permConfig.forcedPermissionDialogConfig?.text ?? '',
+          ),
+          actions: [
+            TextButton(
+              onPressed: _showSettings,
+              child: Text(
+                permConfig.forcedPermissionDialogConfig?.buttonText ?? '',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-    while (true) {
-      // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
-      await openAppSettings();
+  Future<void> _showSettings() async {
+    final navigator = Navigator.of(context);
 
-      final granted = await perm.status.isGranted;
-      if (granted) break;
-    }
+    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
+    await openAppSettings();
 
     navigator.pop();
   }
