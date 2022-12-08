@@ -59,7 +59,10 @@ class FlutterForcePermission {
     // ignore: avoid-ignoring-return-values, not needed.
     await navigator.push(
       MaterialPageRoute(
-        builder: (context) => DisclosurePage(forcePermission: this),
+        builder: (context) => DisclosurePage(
+          permissionConfig: config,
+          permissionStatuses: permissionStatuses,
+        ),
       ),
     );
 

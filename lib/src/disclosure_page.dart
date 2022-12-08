@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission.dart';
+import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,20 +14,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 /// Shown when there are any permissions that need users to grant.
 class DisclosurePage extends StatefulWidget {
-  const DisclosurePage({super.key, required this.forcePermission});
+  const DisclosurePage({super.key, required this.permissionConfig, required this.permissionStatuses});
 
   /// Maximum number of lines displayed for title and rationale for each permission item.
   static const maxLines = 3;
 
-  final FlutterForcePermission forcePermission;
+  final FlutterForcePermissionConfig permissionConfig;
+  final Map<Permission, PermissionStatus> permissionStatuses;
 
   @override
   State<DisclosurePage> createState() => _DisclosurePageState();
 }
 
 class _DisclosurePageState extends State<DisclosurePage>
-// ignore: prefer_mixin, WidgetsBindingObserver is Framework code
-    with WidgetsBindingObserver {
+    with
+        // ignore: prefer_mixin, WidgetsBindingObserver is Framework code
+        WidgetsBindingObserver {
   StreamController<bool> resumed = StreamController.broadcast();
 
   @override
@@ -53,18 +56,24 @@ class _DisclosurePageState extends State<DisclosurePage>
 
   @override
   Widget build(BuildContext context) {
-    final permConfig = widget.forcePermission.config;
-
     final titleWidget = Column(
       children: [
         const SizedBox(height: 64),
         Text(
-          permConfig.title,
+          widget.permissionConfig.title,
           style: Theme.of(context).textTheme.headline6,
         ),
         const SizedBox(height: 16),
       ],
     );
+
+    final permissionItems = widget.permissionConfig.permissionItemConfigs
+        .where(
+          (element) => element.permissions.every(
+            (perm) => widget.permissionStatuses[perm] != PermissionStatus.granted,
+          ),
+        )
+        .toList();
 
     return Scaffold(
       body: Column(
@@ -73,13 +82,12 @@ class _DisclosurePageState extends State<DisclosurePage>
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(32),
-              itemCount: permConfig.permissionItemConfigs.length + 1,
+              itemCount: permissionItems.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return titleWidget;
                 } else {
-                  final item = widget
-                      .forcePermission.config.permissionItemConfigs[index - 1];
+                  final item = permissionItems[index - 1];
                   var icon = item.icon;
                   if (icon == null) {
                     final perm = item.permissions.first;
@@ -163,7 +171,7 @@ class _DisclosurePageState extends State<DisclosurePage>
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => _onGrantPermission(context),
-              child: Text(widget.forcePermission.config.confirmText),
+              child: Text(widget.permissionConfig.confirmText),
             ),
           ),
         ],
@@ -178,7 +186,7 @@ class _DisclosurePageState extends State<DisclosurePage>
     // Request permissions one by one because in some cases requesting
     // multiple permissions does not ask the user as expected.
     for (final PermissionItemConfig permConfig
-        in widget.forcePermission.config.permissionItemConfigs) {
+        in widget.permissionConfig.permissionItemConfigs) {
       for (final Permission perm in permConfig.permissions) {
         // ignore: avoid-ignoring-return-values, not needed.
         await perm.request();
