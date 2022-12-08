@@ -1,0 +1,276 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+
+# Additional information about this file can be found at
+# Dart Linter: https://dart.dev/guides/language/analysis-options
+# Quick fix: https://dart.dev/tools/linter-rules#quick-fixes
+# Dart Code Metrics: https://dartcodemetrics.dev/
+
+# Rules
+# Linter rules: https://dart.dev/tools/linter-rules
+# Dart Code Metrics Rules: https://dartcodemetrics.dev/docs/rules
+
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "example/**"
+    - "build/**"
+    - "lib/generated_code/**"
+    - "**/*.freezed.*"
+    - "**/*.g.*"
+    - "**/*test.mocks.*"
+  plugins:
+    - dart_code_metrics
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at
+  # https://dart-lang.github.io/linter/lints/index.html.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    # Error rules:
+    always_use_package_imports: true # Avoid relative imports for files in lib/.
+    avoid_dynamic_calls: false # Avoid method calls or property accesses on a “dynamic” target.
+    avoid_returning_null_for_future: true # Avoid returning null for Future.
+    avoid_type_to_string: true # Avoid .toString() in production code since results may be minified.
+    cancel_subscriptions: true # Cancel instances of dart.async.StreamSubscription.
+    close_sinks: true # Close instances of dart.core.Sink.
+    comment_references: true # Only reference in scope identifiers in doc comments.
+    diagnostic_describe_all_properties: false # DO reference all public properties in debug methods.
+    discarded_futures: false # DO Don’t invoke asynchronous functions in non-async blocks.
+    literal_only_boolean_expressions: true # Boolean expression composed only with literals.
+    no_adjacent_strings_in_list: true # Don’t use adjacent strings in list.
+    prefer_relative_imports: false # Prefer relative imports for files in lib/.
+    test_types_in_equals: true # Test type arguments in operator ==(Object other).
+    throw_in_finally: true # Avoid throw in finally block.
+    unnecessary_statements: true # Avoid using unnecessary statements.
+    unsafe_html: true # Avoid unsafe HTML APIs.
+
+    # Style rules:
+    always_declare_return_types: true # Declare method return types.
+    always_put_control_body_on_new_line: false # Separate the control structure expression from its statement.
+    always_put_required_named_parameters_first: false # Put required named parameters first.
+    always_specify_types: false # Specify type annotations.
+    avoid_annotating_with_dynamic: true # Avoid annotating with dynamic when not required.
+    avoid_bool_literals_in_conditional_expressions: true # Avoid bool literals in conditional expressions.
+    avoid_catches_without_on_clauses: true # Avoid catches without on clauses.
+    avoid_catching_errors: true # Don’t explicitly catch Error or types that implement it.
+    avoid_classes_with_only_static_members: true # Avoid defining a class that contains only static members.
+    avoid_double_and_int_checks: true # Avoid double and int checks.
+    avoid_equals_and_hash_code_on_mutable_classes: true # Avoid overloading operator == and hashCode on classes not marked @immutable.
+    avoid_escaping_inner_quotes: true # Avoid escaping inner quotes by converting surrounding quotes.
+    avoid_field_initializers_in_const_classes: true # Avoid field initializers in const classes.
+    avoid_final_parameters: true # Avoid final for parameter declarations
+    avoid_implementing_value_types: true # Don’t implement classes that override ==.
+    avoid_js_rounded_ints: true # Avoid JavaScript rounded ints.
+    avoid_positional_boolean_parameters: true # Avoid positional boolean parameters.
+    avoid_private_typedef_functions: true # Avoid private typedef functions.
+    avoid_redundant_argument_values: true # Avoid redundant argument values.
+    avoid_returning_null: true # Avoid returning null from members whose return type is bool, double, int, or num.
+    avoid_returning_this: true # Avoid returning this from methods just to enable a fluent interface.
+    avoid_setters_without_getters: true # Avoid setters without getters.
+    avoid_types_on_closure_parameters: false # Avoid annotating types for function expression parameters.
+    avoid_unused_constructor_parameters: true # Avoid defining unused parameters in constructors.
+    avoid_void_async: true # Avoid async functions that return void.
+    cascade_invocations: true # Cascade consecutive method invocations on the same reference.
+    cast_nullable_to_non_nullable: true # Don’t cast a nullable value to a non nullable type.
+    combinators_ordering: true # Sort combinator names alphabetically.
+    conditional_uri_does_not_exist: true # Missing conditional import.
+    deprecated_consistency: true # deprecated_consistency
+    directives_ordering: true # Adhere to Effective Dart Guide directives sorting conventions.
+    do_not_use_environment: true # Do not use environment declared variables.
+    eol_at_end_of_file: true # Put a single newline at end of file.
+    flutter_style_todos: true # Use Flutter TODO format: // TODO(username): message, https://URL-to-issue.
+    join_return_with_assignment: true # Join return statement with assignment when possible.
+    leading_newlines_in_multiline_strings: true # Start multiline strings with a newline.
+    lines_longer_than_80_chars: false # Avoid lines longer than 80 characters.
+    missing_whitespace_between_adjacent_strings: true # Missing whitespace between adjacent strings.
+    no_default_cases: false # No default cases.
+    no_runtimeType_toString: true # Avoid calling toString() on runtimeType.
+    noop_primitive_operations: true # Noop primitive operations.
+    omit_local_variable_types: false # Omit type annotations for local variables.
+    one_member_abstracts: false # Avoid defining a one-member abstract class when a simple function will do.
+    only_throw_errors: true # Only throw instances of classes extending either Exception or Error.
+    package_api_docs: false # Provide doc comments for all public APIs.
+    parameter_assignments: true # Don’t reassign references to parameters of functions or methods.
+    prefer_asserts_with_message: true # Prefer asserts with message.
+    prefer_constructors_over_static_methods: true # Prefer defining constructors instead of static methods to create instances.
+    prefer_double_quotes: false # Prefer double quotes where they won’t require escape sequences.
+    prefer_expression_function_bodies: true # Use => for short members whose body is a single return statement.
+    prefer_final_in_for_each: true # Prefer final in for-each loop variable if reference is not reassigned.
+    prefer_final_locals: true # Prefer final for variable declarations if they are not reassigned.
+    prefer_final_parameters: false # Prefer final for parameter declarations if they are not reassigned.
+    prefer_foreach: true # Use forEach to only apply a function to all the elements.
+    prefer_if_elements_to_conditional_expressions: true # Prefer if elements to conditional expressions where possible.
+    prefer_int_literals: true # Prefer int literals over double literals.
+    prefer_mixin: true # Prefer using mixins.
+    prefer_null_aware_method_calls: true # Prefer null aware method calls.
+    prefer_single_quotes: true # Only use double quotes for strings containing single quotes.
+    public_member_api_docs: false # Document all public members.
+    require_trailing_commas: true # Use trailing commas for all function calls and declarations.
+    sized_box_shrink_expand: true # Use SizedBox shrink and expand named constructors.
+    sort_constructors_first: true # Sort constructor declarations before other members.
+    sort_unnamed_constructors_first: false # Sort constructor declarations before other members.
+    tighten_type_of_initializing_formals: true # Tighten type of initializing formal.
+    type_annotate_public_apis: true # Type annotate public APIs.
+    unawaited_futures: true # Future results in async function bodies must be awaited or marked unawaited using dart:async.
+    unnecessary_await_in_return: true # Unnecessary await keyword in return.
+    unnecessary_final: false # Don’t use final for local variables.
+    unnecessary_lambdas: true # Don’t create a lambda when a tear-off will do.
+    unnecessary_null_aware_operator_on_extension_on_nullable: true # Unnecessary null aware operator on extension on a nullable type
+    unnecessary_null_checks: true # Unnecessary null checks.
+    unnecessary_parenthesis: true # Unnecessary parenthesis can be removed.
+    unnecessary_raw_strings: true # Unnecessary raw string.
+    unnecessary_to_list_in_spreads: true # Unnecessary toList() in spreads.
+    use_colored_box: true # Use ColoredBox.
+    use_decorated_box: true # Use DecoratedBox.
+    use_enums: true # Use enums rather than classes that behave like enums.
+    use_if_null_to_convert_nulls_to_bools: true # Use if-null operators to convert nulls to bools.
+    use_is_even_rather_than_modulo: true # Prefer intValue.isOdd/isEven instead of checking the result of % 2.
+    use_late_for_private_fields_and_variables: true # Use late for private members with a non-nullable type.
+    use_named_constants: true # Use predefined named constants.
+    use_raw_strings: true # Use raw string to avoid escapes.
+    use_setters_to_change_properties: true # Use a setter for operations that conceptually change a property.
+    use_string_buffers: true # Use string buffers to compose strings.
+    use_super_parameters: true # Use super-initializer parameters where possible.
+    use_test_throws_matchers: true # Use throwsA matcher instead of fail().
+    use_to_and_as_if_applicable: true # Start the name of the method with to/_to or as/_as if applicable.
+
+    # Pub rules:
+    sort_pub_dependencies: false # Sort pub dependencies alphabetically.
+
+dart_code_metrics:
+
+  metrics:
+    cyclomatic-complexity: 20 # Number of linearly independent paths through a block of code. Conditional operators or loops increases the number of paths in a code. The more paths, the higher the number of test cases that need to be implemented.
+    halstead-volume: 1500 # The Halstead metrics are based on the numbers of operators and operands.
+    #    lines-of-code: 100 # The lines of code are the total number of lines in a method (or function). The comment lines, and the blank lines are also counted. A longer method is often difficult to maintain, tend to do a lot of things and can make it hard following what's going on.
+    #    maintainability-index: 50 # Maintainability Index is a software metric which measures how maintainable (easy to support and change) the source code is. The maintainability index is calculated as a factored formula consisting of Source Lines Of Code, Cyclomatic Complexity and Halstead Volume.
+    #    number-of-methods: 10 # The number of methods is the total number of methods in a class (or mixin, or extension). Too many methods indicate a high complexity.
+    number-of-parameters: 4 # The number of parameters is the number of parameters received by a method (or function). If a method receive too many parameters, it is difficult to call and also difficult to change if it's called from many places.
+    maximum-nesting-level: 5 # Maximum Nesting Level this is the maximum level of nesting blocks / control structures that are present in a method (or function). Code with deep nesting level are often complex and tough to maintain.
+    #    number-of-methods: 10
+    source-lines-of-code: 100 # Source lines of Code is an approximate number of source code lines in a function or method. Blank or comment lines are not counted.
+  #    technical-debt: # The cost of additional rework caused by choosing an easy (limited) solution now instead of using a better approach that would take longer. The metric count debt based on pattern: https://dartcodemetrics.dev/docs/metrics/technical_debt
+  #      threshold: 1
+  #      todo-cost: 80
+  #      ignore-cost: 160
+  #      ignore-for-file-cost: 200
+  #      as-dynamic-cost: 160
+  #      deprecated-annotations-cost: 18
+  #      file-nullsafety-migration-cost: 20
+  #      unit-type: "USD"
+
+  #    weight-of-class: 0.33 # Number of functional public methods divided by the total number of public methods.
+  metrics-exclude:
+    - test/**
+    - lib/views/**
+    - lib/main.dart
+    - lib/models/**
+    - lib/model_extensions/**
+  rules:
+    # Common
+    - avoid-banned-imports # Configure some imports that you want to ban, ref: https://dartcodemetrics.dev/docs/rules/common/avoid-banned-imports
+    - avoid-collection-methods-with-unrelated-types # Avoid using collection methods with unrelated types, such as accessing a map of integers using a string key.
+    - avoid-duplicate-exports # Warns when a file has multiple exports declarations with the same URI.
+    #    - avoid-dynamic # Warns when the dynamic type is used as a variable type in a declaration, return type of a function, etc. Using dynamic is considered unsafe since it can easily result in runtime errors.
+    - avoid-global-state # The rule should violate on not final and non-const top-level variables.
+    - avoid-ignoring-return-values # Warns when a return value of a method or function invocation or a class instance property access is not used.
+    - avoid-late-keyword # Warns when a field or variable is declared with a late keyword.
+    - avoid-missing-enum-constant-in-map # Warns when a enum constant is missing in a map declaration.
+    - avoid-nested-conditional-expressions: # Checks for nested conditional expressions.
+        acceptable-level: 2
+    - avoid-non-ascii-symbols # Warns when a string literal contains non ascii characters. This might indicate that the string was not localized.
+    - avoid-non-null-assertion # Warns when non null assertion operator (! or “bang” operator) is used for a property access or method invocation. The operator check works at runtime and it may fail and throw a runtime exception.
+    - avoid-throw-in-catch-block # Call throw in a catch block loses the original stack trace and the original exception.
+#    - avoid-top-level-members-in-tests # Warns when a public top-level member (expect the entrypoint) is declared inside a test file. // Won't do, got issue for this rule as it will include non-test files, which is not expected.
+    - avoid-unnecessary-type-assertions # Warns about unnecessary usage of is and whereType operators.
+    - avoid-unnecessary-type-casts # Warns about of unnecessary use of casting operators.
+    - avoid-unrelated-type-assertions # Warns about unrelated usages of is operator.
+    - avoid-unused-parameters: # Checks for unused parameters inside a function or method body. For overridden methods suggests renaming unused parameters to _, __, etc.
+        exclude:
+          - lib/**/*bloc.dart
+    - ban-name # Configure some names that you want to ban, ref: https://dartcodemetrics.dev/docs/rules/common/ban-name
+    - binary-expression-operand-order # Warns when a literal value is on the left hand side in a binary expressions, inspired by https://palantir.github.io/tslint/rules/binary-expression-operand-order/
+    - double-literal-format # Checks that double literals should begin with 0. instead of just ., and should not end with a trailing 0. Helps keep a consistent style of numeric literals and decrease potential typos.
+    - format-comment # Prefer format comments like sentences.
+    #    - member-ordering-extended # Enforces extended member ordering. Don't use this rule with the default member-ordering rule!
+    - newline-before-return # Enforces blank line between statements and return in a block.
+    - no-boolean-literal-compare # Warns on comparison to a boolean literal, as in x == true. Comparing boolean values to boolean literals is unnecessary, as those expressions will result in booleans too. Just use the boolean values directly or negate them.
+    - no-empty-block # Disallows empty blocks except catch clause block. Blocks with a todo comment inside are not considered empty.
+    - no-equal-arguments: # Warns when equal arguments passed to a function or method invocation.
+        ignored-parameters:
+          - height
+          - width
+          - weekdayStyle
+          - weekendStyle
+          - focusedDay
+          - selectedDay
+    - no-equal-then-else # Warns when if statement has equal then and else statements or conditional expression has equal then and else expressions.
+    - no-magic-number: # Warns against using number literals outside of named constants or variables. Exceptions are made for common constants (by default: -1, 0 and 1) and for literals inside DateTime constructor as there is no way to create const DateTime and extracting each int argument to separate named constant is far too inconvenient.
+        exclude:
+          - lib/main.dart
+          - lib/views/**
+          - lib/models/**
+          - lib/utils/**
+          - lib/models/**
+        allowed: [ 0, 1 ]
+    - no-object-declaration # Warns when a class member is declared with Object type.
+    - prefer-async-await # Recommends to use async/await syntax to handle Futures result instead of .then() invocation. Also can help prevent errors with mixed await and .then() usages, since awaiting the result of a Future with .then() invocation awaits the completion of .then().
+    - prefer-commenting-analyzer-ignores # Warns when // ignore: comments are left without any additional description why this ignore is applied.
+    - prefer-conditional-expressions # Recommends to use a conditional expression instead of assigning to the same thing or return statement in each branch of an if statement.
+    - prefer-correct-identifier-length: # The rule checks the length of variable names in classes, functions, extensions, mixins, and also checks the value of enum.
+        exceptions: [ 'e', 'i', 'j', 'k', 'kg', 'cm', 'id' ]
+        max-identifier-length: 30
+        min-identifier-length: 3
+    - prefer-correct-type-name: # Rule checks that the type name should only contain alphanumeric characters, start with an uppercase character and span between min-length and max-length characters in length.
+        max-length: 40
+        min-length: 3
+    - prefer-enums-by-name # Since Dart 2.15 it's possible to use byName method on enum values prop instead of searching the value with firstWhere. byName will throw an exception if the enum does not contain a value for the given name.
+    - prefer-first # Warns when the first element of an Iterable or a List is accessed by list[0] or iterable.elementAt(0) instead of calling iterable.first.
+    - prefer-immediate-return # Declaring a local variable only to immediately return it might be considered a bad practice. The name of a function or a class method with its return type should give enough information about what should be returned.
+    - prefer-last # Warns when the last element of an Iterable is accessed by iterable[iterable.length - 1] or iterable.elementAt(iterable.length - 1) instead of calling iterable.last.
+    - prefer-match-file-name: # Warns if the file name does not match the name of the first public class / mixin / extension / enum in the file or a private one if there are no public entries.
+      exclude:
+        - test/**
+    - prefer-moving-to-variable: # Warns when a property access or a method invocation start with duplicated chains of other invocations / accesses inside a single function or method block.
+        allowed-duplicated-chains: 3
+    - prefer-trailing-comma # Check for trailing comma for arguments, parameters, enum values and collections. By default warns in cases when items aren't on a single line.
+    - tag-name # Warns when tag name does not match class name.
+
+    # Flutter
+    - always-remove-listener # Warns when an event listener is added but never removed.
+    - avoid-border-all # Border.all constructor calls const Border.fromBorderSide constructor under the hood. This rule allows to replace Border.all with const Border.fromBorderSide.
+    - avoid-returning-widgets # Warns when a method, function or getter returns a Widget or subclass of a Widget.
+    - avoid-shrink-wrap-in-lists # Warns when a ListView widget with shrinkWrap parameter is wrapped in a Column, Row or another ListView widget.
+    - avoid-unnecessary-setstate # Warns when setState is called inside initState, didUpdateWidget or build methods and when it's called from a sync method that is called inside those methods.
+    - avoid-wrapping-in-padding # Warns when a widget is wrapped in a Padding widget but has a padding settings by itself.
+    - prefer-const-border-radius # BorderRadius.circular constructor calls const BorderRadius.all constructor under the hood. This rule allows to replace BorderRadius.circular(value) with const BorderRadius.all(Radius.circular(value)) if radius is a constant value.
+    - prefer-correct-edge-insets-constructor # If any value, passed to EdgeInsets.fromLTRB, equals 0, then EdgeInsets.fromLTRB should be replaced with EdgeInsets.only passing all non-zero values. If passed values are symmetric, then EdgeInsets.fromLTRB or EdgeInsets.only should be replaced with EdgeInsets.symmetric.
+    - prefer-extracting-callbacks: # Warns about inline callbacks in a widget tree and suggests to extract them to widget methods in order to make a build method more readable. In addition extracting can help test those methods separately as well.
+        allowed-line-count: 3
+    - prefer-single-widget-per-file: # Warns when a file contains more than a single widget.
+        ignore-private-widgets: true
+
+    # Intl
+    - prefer-intl-name # Recommends to use ${ClassName}_${ClassMemberName} pattern for name argument in Intl.message(), Intl.plural(), Intl.gender(), Intl.select() methods.
+    - provide-correct-intl-args # Warns when the Intl.message() invocation has incorrect args list.
+
+  anti-patterns:
+    - long-method # Already excluded Flutter widget build method.
+    - long-parameter-list
