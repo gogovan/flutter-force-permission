@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_force_permission/flutter_force_permission.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
+import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +20,7 @@ class DisclosurePage extends StatefulWidget {
   static const maxLines = 3;
 
   final FlutterForcePermissionConfig permissionConfig;
-  final Map<Permission, PermissionStatus> permissionStatuses;
+  final Map<Permission, PermissionServiceStatus> permissionStatuses;
 
   @override
   State<DisclosurePage> createState() => _DisclosurePageState();
@@ -70,7 +70,7 @@ class _DisclosurePageState extends State<DisclosurePage>
     final permissionItems = widget.permissionConfig.permissionItemConfigs
         .where(
           (element) => element.permissions.every(
-            (perm) => widget.permissionStatuses[perm] != PermissionStatus.granted,
+            (perm) => widget.permissionStatuses[perm]?.status != PermissionStatus.granted,
           ),
         )
         .toList();

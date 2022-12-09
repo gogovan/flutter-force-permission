@@ -8,6 +8,7 @@ class PermissionItemConfig {
   PermissionItemConfig({
     required this.permissions,
     required this.itemText,
+    this.serviceItemText,
     this.required = false,
   });
 
@@ -19,6 +20,13 @@ class PermissionItemConfig {
 
   /// The display item configuration for these permission(s). Refer to [PermissionItemText] for details.
   final PermissionItemText itemText;
+
+  /// If the permission has an associated service (e.g. location), this service
+  /// will also be checked for availability.
+  /// If service is unavailable and this item is not null, the disclosure page will
+  /// show a disclosure item for this service, before permission items.
+  /// If this permission is required, users will also be asked to enable the service.
+  final PermissionItemText? serviceItemText;
 
   /// Whether these permission(s) are required.
   ///
