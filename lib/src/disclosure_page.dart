@@ -88,7 +88,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                   return titleWidget;
                 } else {
                   final item = permissionItems[index - 1];
-                  var icon = item.icon;
+                  var icon = item.itemText.icon;
                   if (icon == null) {
                     final perm = item.permissions.first;
                     if (perm.value == Permission.notification.value) {
@@ -140,7 +140,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                             children: [
                               Flexible(
                                 child: Text(
-                                  item.header,
+                                  item.itemText.header,
                                   style: Theme.of(context).textTheme.subtitle1,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
@@ -149,7 +149,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                               ),
                               Flexible(
                                 child: Text(
-                                  item.rationaleText,
+                                  item.itemText.rationaleText,
                                   style: Theme.of(context).textTheme.bodyText2,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
@@ -210,6 +210,7 @@ class _DisclosurePageState extends State<DisclosurePage>
   }
 
   Future<void> _showRequiredPermDialog(PermissionItemConfig permConfig) async {
+    final dialogConfig = permConfig.itemText.forcedPermissionDialogConfig;
     // ignore: avoid-ignoring-return-values, not needed.
     await showDialog(
       context: context,
@@ -217,18 +218,12 @@ class _DisclosurePageState extends State<DisclosurePage>
       builder: (context) => WillPopScope(
         onWillPop: () async => false,
         child: AlertDialog(
-          title: Text(
-            permConfig.forcedPermissionDialogConfig?.title ?? '',
-          ),
-          content: Text(
-            permConfig.forcedPermissionDialogConfig?.text ?? '',
-          ),
+          title: Text(dialogConfig?.title ?? '',),
+          content: Text(dialogConfig?.text ?? '',),
           actions: [
             TextButton(
               onPressed: _showSettings,
-              child: Text(
-                permConfig.forcedPermissionDialogConfig?.buttonText ?? '',
-              ),
+              child: Text(dialogConfig?.buttonText ?? '',),
             ),
           ],
         ),
