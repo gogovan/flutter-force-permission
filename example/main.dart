@@ -30,59 +30,77 @@ class App extends StatelessWidget {
     return Scaffold(
         body: Center(
             child: ElevatedButton(
-              child: const Text("Show disclosure page"),
-              onPressed: () async {
-                final perm = FlutterForcePermission(
-                  FlutterForcePermissionConfig(
-                    title: 'Title',
-                    confirmText: 'Confirm',
-                    permissionItemConfigs: [
-                      PermissionItemConfig(
-                        permissions: [Permission.notification],
-                        itemText: PermissionItemText(
-                          header: 'Notification',
-                          rationaleText: 'Rationale for Notification.',
-                        ),
-                      ),
-                      PermissionItemConfig(
-                        permissions: [Permission.locationWhenInUse],
-                        required: true,
-                        itemText: PermissionItemText(
-                          header: 'Foreground Location',
-                          rationaleText: 'Rationale for Foreground location. Required.',
-                          forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
-                            title: 'Please enable location permission',
-                            text: 'Please enable location permission for proper usage.',
-                            buttonText: 'Settings',
-                          ),
-                        ),
-                      ),
-                      PermissionItemConfig(
-                        permissions: [Permission.locationAlways],
-                        itemText: PermissionItemText(
-                          header: 'Background Location',
-                          rationaleText: 'Rationale for Background location. lorem ipsum dolor sit amet.',
-                        ),
-                      ),
-                      PermissionItemConfig(
-                        permissions: [
-                          Permission.activityRecognition,
-                          Permission.sensors,
-                        ],
-                        itemText: PermissionItemText(
-                          header: 'Activity Recognition and sensors',
-                          rationaleText: 'Rationale for Activity Recognition and sensors.',
-                        ),
-                      )
-                    ],
+      child: const Text("Show disclosure page"),
+      onPressed: () async {
+        final perm = FlutterForcePermission(
+          FlutterForcePermissionConfig(
+            title: 'Title',
+            confirmText: 'Confirm',
+            permissionItemConfigs: [
+              PermissionItemConfig(
+                permissions: [Permission.notification],
+                itemText: PermissionItemText(
+                  header: 'Notification',
+                  rationaleText: 'Rationale for Notification.',
+                  icon:
+                      const Icon(Icons.notifications_none, color: Colors.blue),
+                ),
+              ),
+              PermissionItemConfig(
+                permissions: [Permission.locationWhenInUse],
+                required: true,
+                itemText: PermissionItemText(
+                  header: 'Foreground Location',
+                  rationaleText: 'Rationale for Foreground location. Required.',
+                  icon: const Icon(Icons.location_on_outlined,
+                      color: Colors.blue),
+                  forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                    title: 'Please enable location permission',
+                    text: 'Please enable location permission for proper usage.',
+                    buttonText: 'Settings',
                   ),
-                );
+                ),
+                serviceItemText: PermissionItemText(
+                  header: 'GPS',
+                  rationaleText: 'Rationale for GPS. Required.',
+                  forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                    title: 'Please enable GPS',
+                    text: 'Please enable GPS for proper usage.',
+                    buttonText: 'Settings',
+                  ),
+                  icon: const Icon(Icons.gps_fixed, color: Colors.blue),
+                ),
+              ),
+              PermissionItemConfig(
+                permissions: [Permission.locationAlways],
+                itemText: PermissionItemText(
+                  header: 'Background Location',
+                  rationaleText:
+                      'Rationale for Background location. lorem ipsum dolor sit amet.',
+                  icon: const Icon(Icons.location_on, color: Colors.blue),
+                ),
+              ),
+              PermissionItemConfig(
+                permissions: [
+                  Permission.activityRecognition,
+                  Permission.sensors,
+                ],
+                itemText: PermissionItemText(
+                  header: 'Activity Recognition and sensors',
+                  rationaleText:
+                      'Rationale for Activity Recognition and sensors.',
+                  icon: const Icon(Icons.directions_run, color: Colors.blue),
+                ),
+              )
+            ],
+          ),
+        );
 
-                final result = await perm.show(context);
-                if (kDebugMode) {
-                  print(result);
-                }
-              },
-            )));
+        final result = await perm.show(context);
+        if (kDebugMode) {
+          print(result);
+        }
+      },
+    )));
   }
 }

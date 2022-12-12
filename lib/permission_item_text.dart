@@ -15,7 +15,7 @@ class PermissionItemText {
 
   /// The Icon for the permission item.
   ///
-  /// If omitted, a Material Icon appropriate for the permission colored with Primary color of the current theme will be used.
+  /// If omitted, a default icon will be provided.
   final Icon? icon;
 
   /// Detailed text for the permission.
@@ -26,4 +26,7 @@ class PermissionItemText {
 
   /// Configuration for the dialog shown when this permission is denied and the permission is required.
   final ForcedPermissionDialogConfig? forcedPermissionDialogConfig;
+
+  @override
+  String toString() => 'PermissionItemText{header: $header, icon: $icon, rationaleText: $rationaleText, forcedPermissionDialogConfig: $forcedPermissionDialogConfig}';
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
+import 'package:flutter_force_permission/permission_item_text.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,7 +15,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 /// Shown when there are any permissions that need users to grant.
 class DisclosurePage extends StatefulWidget {
-  const DisclosurePage({super.key, required this.permissionConfig, required this.permissionStatuses});
+  const DisclosurePage({
+    super.key,
+    required this.permissionConfig,
+    required this.permissionStatuses,
+  });
 
   /// Maximum number of lines displayed for title and rationale for each permission item.
   static const maxLines = 3;
@@ -24,6 +29,29 @@ class DisclosurePage extends StatefulWidget {
 
   @override
   State<DisclosurePage> createState() => _DisclosurePageState();
+}
+
+@immutable
+class _PermissionItem {
+  const _PermissionItem(this.permission, this.itemText);
+
+  final Permission permission;
+  final PermissionItemText itemText;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _PermissionItem &&
+          runtimeType == other.runtimeType &&
+          permission == other.permission &&
+          itemText == other.itemText;
+
+  @override
+  int get hashCode => permission.hashCode ^ itemText.hashCode;
+
+  @override
+  String toString() =>
+      '_PermissionItem{permission: $permission, itemText: $itemText}';
 }
 
 class _DisclosurePageState extends State<DisclosurePage>
@@ -69,11 +97,24 @@ class _DisclosurePageState extends State<DisclosurePage>
 
     final permissionItems = widget.permissionConfig.permissionItemConfigs
         .where(
-          (element) => element.permissions.every(
-            (perm) => widget.permissionStatuses[perm]?.status != PermissionStatus.granted,
-          ),
-        )
-        .toList();
+      (element) => element.permissions.every(
+        (perm) =>
+            widget.permissionStatuses[perm]?.status != PermissionStatus.granted,
+      ),
+    )
+        .expand((e) {
+      final serviceText = e.serviceItemText;
+      final perm = e.permissions.first;
+      final serviceDisabled = widget.permissionStatuses.values
+          .any((element) => element.serviceStatus == ServiceStatus.disabled);
+
+      return serviceText != null && serviceDisabled
+          ? [
+              _PermissionItem(perm, serviceText),
+              _PermissionItem(perm, e.itemText),
+            ]
+          : [_PermissionItem(perm, e.itemText)];
+    }).toList();
 
     return Scaffold(
       body: Column(
@@ -89,44 +130,10 @@ class _DisclosurePageState extends State<DisclosurePage>
                 } else {
                   final item = permissionItems[index - 1];
                   var icon = item.itemText.icon;
-                  if (icon == null) {
-                    final perm = item.permissions.first;
-                    if (perm.value == Permission.notification.value) {
-                      icon = Icon(
-                        Icons.notifications_none,
-                        color: Theme.of(context).primaryColor,
-                      );
-                    } else if (perm.value ==
-                        Permission.locationWhenInUse.value) {
-                      icon = Icon(
-                        Icons.location_on_outlined,
-                        color: Theme.of(context).primaryColor,
-                      );
-                    } else if (perm.value == Permission.locationAlways.value ||
-                        perm.value == Permission.location.value) {
-                      icon = Icon(
-                        Icons.location_on,
-                        color: Theme.of(context).primaryColor,
-                      );
-                    } else if (perm.value ==
-                            Permission.activityRecognition.value ||
-                        perm.value == Permission.sensors.value) {
-                      icon = Icon(
-                        Icons.directions_run,
-                        color: Theme.of(context).primaryColor,
-                      );
-                    } else {
-                      if (kDebugMode) {
-                        print(
-                          '[FlutterForcePermission] WARN: unsupported permission ${item.permissions} found.',
-                        );
-                      }
-                      icon = Icon(
-                        Icons.perm_device_info_sharp,
-                        color: Theme.of(context).primaryColor,
-                      );
-                    }
-                  }
+                  icon ??= Icon(
+                    Icons.perm_device_info_sharp,
+                    color: Theme.of(context).primaryColor,
+                  );
 
                   return Center(
                     child: Row(
@@ -218,12 +225,18 @@ class _DisclosurePageState extends State<DisclosurePage>
       builder: (context) => WillPopScope(
         onWillPop: () async => false,
         child: AlertDialog(
-          title: Text(dialogConfig?.title ?? '',),
-          content: Text(dialogConfig?.text ?? '',),
+          title: Text(
+            dialogConfig?.title ?? '',
+          ),
+          content: Text(
+            dialogConfig?.text ?? '',
+          ),
           actions: [
             TextButton(
               onPressed: _showSettings,
-              child: Text(dialogConfig?.buttonText ?? '',),
+              child: Text(
+                dialogConfig?.buttonText ?? '',
+              ),
             ),
           ],
         ),
