@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
@@ -195,13 +195,40 @@ class _DisclosurePageState extends State<DisclosurePage>
     for (final PermissionItemConfig permConfig
         in widget.permissionConfig.permissionItemConfigs) {
       for (final Permission perm in permConfig.permissions) {
+        if (permConfig.required && perm is PermissionWithService) {
+          final text = permConfig.serviceItemText;
+          if (text != null) {
+            var serviceStatus = await perm.serviceStatus;
+            while (serviceStatus == ServiceStatus.disabled) {
+              if (perm == Permission.phone) {
+                await _showRequiredPermDialog(text, _showPhoneSettings);
+              } else if (perm == Permission.location ||
+                  perm == Permission.locationAlways ||
+                  perm == Permission.locationWhenInUse) {
+                await _showRequiredPermDialog(text, _showLocationSettings);
+              } else {
+                if (kDebugMode) {
+                  print(
+                    '[flutter-force-permission] WARN: Unsupported Permission with service $perm found.',
+                  );
+                }
+                break;
+              }
+              // ignore: avoid-ignoring-return-values, not needed.
+              await resumed.stream.firstWhere((element) => element);
+              serviceStatus = await perm.serviceStatus;
+            }
+          }
+        }
+
         // ignore: avoid-ignoring-return-values, not needed.
         await perm.request();
 
         if (permConfig.required) {
           var permStatus = await perm.status;
           while (permStatus != PermissionStatus.granted) {
-            await _showRequiredPermDialog(permConfig);
+            await _showRequiredPermDialog(
+                permConfig.itemText, _showAppSettings);
             // ignore: avoid-ignoring-return-values, not needed.
             await resumed.stream.firstWhere((element) => element);
             permStatus = await perm.status;
@@ -216,8 +243,11 @@ class _DisclosurePageState extends State<DisclosurePage>
     navigator.pop();
   }
 
-  Future<void> _showRequiredPermDialog(PermissionItemConfig permConfig) async {
-    final dialogConfig = permConfig.itemText.forcedPermissionDialogConfig;
+  Future<void> _showRequiredPermDialog(
+    PermissionItemText permConfig,
+    VoidCallback openSettings,
+  ) async {
+    final dialogConfig = permConfig.forcedPermissionDialogConfig;
     // ignore: avoid-ignoring-return-values, not needed.
     await showDialog(
       context: context,
@@ -233,7 +263,7 @@ class _DisclosurePageState extends State<DisclosurePage>
           ),
           actions: [
             TextButton(
-              onPressed: _showSettings,
+              onPressed: openSettings,
               child: Text(
                 dialogConfig?.buttonText ?? '',
               ),
@@ -244,11 +274,29 @@ class _DisclosurePageState extends State<DisclosurePage>
     );
   }
 
-  Future<void> _showSettings() async {
+  Future<void> _showPhoneSettings() async {
     final navigator = Navigator.of(context);
 
     // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
-    await openAppSettings();
+    await AppSettings.openDeviceSettings();
+
+    navigator.pop();
+  }
+
+  Future<void> _showLocationSettings() async {
+    final navigator = Navigator.of(context);
+
+    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
+    await AppSettings.openLocationSettings();
+
+    navigator.pop();
+  }
+
+  Future<void> _showAppSettings() async {
+    final navigator = Navigator.of(context);
+
+    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
+    await AppSettings.openAppSettings();
 
     navigator.pop();
   }
