@@ -228,7 +228,9 @@ class _DisclosurePageState extends State<DisclosurePage>
           var permStatus = await perm.status;
           while (permStatus != PermissionStatus.granted) {
             await _showRequiredPermDialog(
-                permConfig.itemText, _showAppSettings);
+              permConfig.itemText,
+              _showAppSettings,
+            );
             // ignore: avoid-ignoring-return-values, not needed.
             await resumed.stream.firstWhere((element) => element);
             permStatus = await perm.status;

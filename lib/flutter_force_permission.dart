@@ -71,7 +71,7 @@ class FlutterForcePermission {
       ),
     );
 
-    // Check for permission status again as it is likely to be updated.
+    // Check for permission status again as it is likely updated.
     return getPermissionStatuses();
   }
 
