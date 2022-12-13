@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_force_permission/flutter_force_permission.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
@@ -45,5 +44,10 @@ void main() {
     expect(find.text('Foreground location'), findsOneWidget);
     expect(find.text('Rationale'), findsOneWidget);
     expect(find.text('Confirm'), findsOneWidget);
+
+    await tester.tap(find.text('Confirm'));
+    await tester.pump();
+
+
   });
 }

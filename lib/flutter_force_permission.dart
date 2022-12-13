@@ -24,12 +24,8 @@ class FlutterForcePermission {
   /// Returns a map of Permission and their status after requesting the permissions.
   /// Only permissions specified in the configuration will be included in the return value.
   Future<Map<Permission, PermissionServiceStatus>> show(
-    BuildContext context,
+    NavigatorState navigator,
   ) async {
-    // Obtain navigator before any await call to avoid storing BuildContext across async gaps.
-    // https://stackoverflow.com/a/69512692
-    final navigator = Navigator.of(context);
-
     // Check for permissions.
     final permissionStatuses = await getPermissionStatuses();
 

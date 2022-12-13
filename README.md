@@ -49,11 +49,11 @@ final perm = FlutterForcePermission(
   );
 ```
 2. Show the disclosure page as needed. This method will handle showing the disclosure page and requesting permissions.
-This function takes a [BuildContext](https://api.flutter.dev/flutter/widgets/BuildContext-class.html) as a parameter, used as the context for showing the disclosure page.
+This function takes a [NavigatorState] which can be retrieved through `Navigator.of(context)` call.
 This is an async function. Wrap the function in an `async` block as needed.
 Returns a map of permission and their requested status (granted/denied/etc). Refer to [permission_handler](https://pub.dev/packages/permission_handler) for the interface.
 ```dart
-final result = await perm.show(context);
+final result = await perm.show(Navigator.of(context));
 ```
 
 ### Styling

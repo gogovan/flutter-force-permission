@@ -96,7 +96,7 @@ class App extends StatelessWidget {
           ),
         );
 
-        final result = await perm.show(context);
+        final result = await perm.show(Navigator.of(context));
         if (kDebugMode) {
           print(result);
         }
