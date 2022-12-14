@@ -7,7 +7,6 @@ import 'package:flutter_force_permission/src/disclosure_page.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:flutter_force_permission/src/permission_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Flutter Force Permission
 ///
@@ -86,13 +85,10 @@ class FlutterForcePermission {
     for (final List<Permission> perms
         in config.permissionItemConfigs.map((e) => e.permissions)) {
       for (final Permission perm in perms) {
-        var status = await _service.status(perm);
+        final status = await _service.status(perm);
         ServiceStatus? serviceStatus;
         if (perm is PermissionWithService) {
           serviceStatus = await _service.serviceStatus(perm);
-          if (!serviceStatus.isEnabled) {
-            status = PermissionStatus.denied;
-          }
         }
         result[perm] = PermissionServiceStatus(
           status: status,
