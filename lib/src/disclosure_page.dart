@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
+import 'package:flutter_force_permission/src/permission_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +19,14 @@ class DisclosurePage extends StatefulWidget {
     super.key,
     required this.permissionConfig,
     required this.permissionStatuses,
+  }) : _service = const TestStub();
+
+  @visibleForTesting
+  const DisclosurePage.stub(
+    this.permissionConfig,
+    this.permissionStatuses,
+    this._service, {
+    super.key,
   });
 
   /// Maximum number of lines displayed for title and rationale for each permission item.
@@ -26,6 +34,8 @@ class DisclosurePage extends StatefulWidget {
 
   final FlutterForcePermissionConfig permissionConfig;
   final Map<Permission, PermissionServiceStatus> permissionStatuses;
+
+  final TestStub _service;
 
   @override
   State<DisclosurePage> createState() => _DisclosurePageState();
@@ -188,7 +198,7 @@ class _DisclosurePageState extends State<DisclosurePage>
 
   Future<void> _onGrantPermission(BuildContext context) async {
     final navigator = Navigator.of(context);
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await widget._service.getSharedPreference();
 
     // Request permissions one by one because in some cases requesting
     // multiple permissions does not ask the user as expected.
@@ -198,7 +208,7 @@ class _DisclosurePageState extends State<DisclosurePage>
         if (permConfig.required && perm is PermissionWithService) {
           final text = permConfig.serviceItemText;
           if (text != null) {
-            var serviceStatus = await perm.serviceStatus;
+            var serviceStatus = await widget._service.serviceStatus(perm);
             while (serviceStatus == ServiceStatus.disabled) {
               if (perm == Permission.phone) {
                 await _showRequiredPermDialog(text, _showPhoneSettings);
@@ -216,16 +226,16 @@ class _DisclosurePageState extends State<DisclosurePage>
               }
               // ignore: avoid-ignoring-return-values, not needed.
               await resumed.stream.firstWhere((element) => element);
-              serviceStatus = await perm.serviceStatus;
+              serviceStatus = await widget._service.serviceStatus(perm);
             }
           }
         }
 
         // ignore: avoid-ignoring-return-values, not needed.
-        await perm.request();
+        await widget._service.request(perm);
 
         if (permConfig.required) {
-          var permStatus = await perm.status;
+          var permStatus = await widget._service.status(perm);
           while (permStatus != PermissionStatus.granted) {
             await _showRequiredPermDialog(
               permConfig.itemText,
@@ -233,7 +243,7 @@ class _DisclosurePageState extends State<DisclosurePage>
             );
             // ignore: avoid-ignoring-return-values, not needed.
             await resumed.stream.firstWhere((element) => element);
-            permStatus = await perm.status;
+            permStatus = await widget._service.status(perm);
           }
         }
 
@@ -279,8 +289,7 @@ class _DisclosurePageState extends State<DisclosurePage>
   Future<void> _showPhoneSettings() async {
     final navigator = Navigator.of(context);
 
-    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
-    await AppSettings.openDeviceSettings();
+    await widget._service.openAppSettings();
 
     navigator.pop();
   }
@@ -288,8 +297,7 @@ class _DisclosurePageState extends State<DisclosurePage>
   Future<void> _showLocationSettings() async {
     final navigator = Navigator.of(context);
 
-    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
-    await AppSettings.openLocationSettings();
+    await widget._service.openLocationSettings();
 
     navigator.pop();
   }
@@ -297,8 +305,7 @@ class _DisclosurePageState extends State<DisclosurePage>
   Future<void> _showAppSettings() async {
     final navigator = Navigator.of(context);
 
-    // ignore: avoid-ignoring-return-values, maybe we could use it but probably later
-    await AppSettings.openAppSettings();
+    await widget._service.openAppSettings();
 
     navigator.pop();
   }

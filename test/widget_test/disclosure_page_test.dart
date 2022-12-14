@@ -47,7 +47,5 @@ void main() {
 
     await tester.tap(find.text('Confirm'));
     await tester.pump();
-
-
   });
 }

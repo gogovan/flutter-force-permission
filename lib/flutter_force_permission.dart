@@ -5,6 +5,7 @@ import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/disclosure_page.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
+import 'package:flutter_force_permission/src/permission_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,10 +14,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Show permission disclosure page and allows required permissions before user can proceed.
 class FlutterForcePermission {
   /// Constructor. Pass configuration here. Refer to [FlutterForcePermissionConfig] for details.
-  FlutterForcePermission(this.config);
+  FlutterForcePermission(this.config): _service = const TestStub();
+
+  @visibleForTesting
+  FlutterForcePermission.stub(this.config, this._service);
 
   /// Configuration. Refer to [FlutterForcePermissionConfig] for details.
   final FlutterForcePermissionConfig config;
+
+  final TestStub _service;
 
   /// Show disclosure page.
   ///
@@ -30,12 +36,12 @@ class FlutterForcePermission {
     final permissionStatuses = await getPermissionStatuses();
 
     if (permissionStatuses.values
-        .every((element) => element.status.isGranted)) {
+        .every((element) => element.status == PermissionStatus.granted)) {
       // All permissions granted, no need to show disclosure page.
       return permissionStatuses;
     }
 
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _service.getSharedPreference();
     var needShow = false;
     for (final permConfig in config.permissionItemConfigs) {
       for (final perm in permConfig.permissions) {
@@ -80,10 +86,10 @@ class FlutterForcePermission {
     for (final List<Permission> perms
         in config.permissionItemConfigs.map((e) => e.permissions)) {
       for (final Permission perm in perms) {
-        var status = await perm.status;
+        var status = await _service.status(perm);
         ServiceStatus? serviceStatus;
         if (perm is PermissionWithService) {
-          serviceStatus = await perm.serviceStatus;
+          serviceStatus = await _service.serviceStatus(perm);
           if (!serviceStatus.isEnabled) {
             status = PermissionStatus.denied;
           }
