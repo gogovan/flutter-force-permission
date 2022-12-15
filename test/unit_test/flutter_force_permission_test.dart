@@ -25,7 +25,9 @@ void main() {
   });
 
   test('Do not show disclosure page if permission already granted', () async {
-    await _test(permissionStatus: PermissionStatus.granted, expectNavigatorPushed: false);
+    await _test(
+        permissionStatus: PermissionStatus.granted,
+        expectNavigatorPushed: false);
   });
 
   test('Do not show disclosure page if already asked', () async {
@@ -48,7 +50,8 @@ Future<void> _test({
   when(navigator.push(any)).thenAnswer((realInvocation) => Future.value());
 
   final prefs = MockSharedPreferences();
-  when(prefs.getBool('Permission.location_requested')).thenReturn(prefRequested);
+  when(prefs.getBool('Permission.location_requested'))
+      .thenReturn(prefRequested);
 
   final testStub = MockTestStub();
   when(testStub.status(Permission.location))
