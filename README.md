@@ -1,4 +1,5 @@
 # flutter-force-permission
+[![codecov](https://codecov.io/gh/gogovan/flutter-force-permission/branch/main/graph/badge.svg?token=F9DPJUAVAJ)](https://codecov.io/gh/gogovan/flutter-force-permission)
 Show permission disclosure page and allows required permissions and their associated services before the user can proceed.
 
 This package shows a prominent in-app disclosure page for getting permissions as required by [Google Play](https://support.google.com/googleplay/android-developer/answer/9799150?visit_id=638041800350153935-369621111&p=pd-m&rd=1#prominent_disclosure&zippy=%2Cstep-provide-prominent-in-app-disclosure%2Cstep-review-best-practices-for-accessing-location%2Cstep-consider-alternatives-to-accessing-location-in-the-background%2Cstep-make-access-to-location-in-the-background-clear-to-users%2Csee-an-example-of-prominent-in-app-disclosure).
