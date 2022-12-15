@@ -28,4 +28,10 @@ jobs:
         run: flutter pub run dart_code_metrics:metrics analyze lib --fatal-style --fatal-warnings --fatal-performance --set-exit-on-violation-level=warning
 
       - name: Run tests
-        run: flutter test
+        run: flutter test --coverage
+
+      - name: Publish coverage
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov chmod +x codecov ./codecov
+          chmod +x codecov
+          ./codecov
