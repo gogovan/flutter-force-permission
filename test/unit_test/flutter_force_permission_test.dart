@@ -26,8 +26,9 @@ void main() {
 
   test('Do not show disclosure page if permission already granted', () async {
     await _test(
-        permissionStatus: PermissionStatus.granted,
-        expectNavigatorPushed: false);
+      permissionStatus: PermissionStatus.granted,
+      expectNavigatorPushed: false,
+    );
   });
 
   test('Do not show disclosure page if already asked', () async {
