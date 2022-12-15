@@ -9,25 +9,27 @@ import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:flutter_force_permission/src/permission_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Disclosure page.
 ///
 /// Shown when there are any permissions that need users to grant.
 class DisclosurePage extends StatefulWidget {
-  const DisclosurePage({
+  DisclosurePage({
     super.key,
     required this.permissionConfig,
     required this.permissionStatuses,
-  }) : _service = const TestStub();
+  })  : _service = const TestStub(),
+        _resumed = StreamController.broadcast();
 
   @visibleForTesting
-  const DisclosurePage.stub(
-    this.permissionConfig,
-    this.permissionStatuses,
-    this._service, {
+  const DisclosurePage.stub({
+    required this.permissionConfig,
+    required this.permissionStatuses,
+    required service,
+    required resumed,
     super.key,
-  });
+  })  : _service = service,
+        _resumed = resumed;
 
   /// Maximum number of lines displayed for title and rationale for each permission item.
   static const maxLines = 3;
@@ -36,6 +38,8 @@ class DisclosurePage extends StatefulWidget {
   final Map<Permission, PermissionServiceStatus> permissionStatuses;
 
   final TestStub _service;
+
+  final StreamController<bool> _resumed;
 
   @override
   State<DisclosurePage> createState() => _DisclosurePageState();
@@ -68,12 +72,10 @@ class _DisclosurePageState extends State<DisclosurePage>
     with
         // ignore: prefer_mixin, WidgetsBindingObserver is Framework code
         WidgetsBindingObserver {
-  StreamController<bool> resumed = StreamController.broadcast();
-
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
-      resumed.add(true);
+      widget._resumed.add(true);
     }
   }
 
@@ -88,7 +90,7 @@ class _DisclosurePageState extends State<DisclosurePage>
     // ignore: avoid-ignoring-return-values, not needed.
     WidgetsBinding.instance.removeObserver(this);
     // ignore: avoid-ignoring-return-values, not needed.
-    resumed.close();
+    widget._resumed.close();
     super.dispose();
   }
 
@@ -105,25 +107,25 @@ class _DisclosurePageState extends State<DisclosurePage>
       ],
     );
 
-    final permissionItems = widget.permissionConfig.permissionItemConfigs
-        .where(
-      (element) => element.permissions.every(
-        (perm) =>
-            widget.permissionStatuses[perm]?.status != PermissionStatus.granted,
-      ),
-    )
-        .expand((e) {
-      final serviceText = e.serviceItemText;
-      final perm = e.permissions.first;
+    final permissionItems =
+        widget.permissionConfig.permissionItemConfigs.expand((e) {
+      final denied = widget.permissionStatuses.values
+          .any((element) => element.status != PermissionStatus.granted);
       final serviceDisabled = widget.permissionStatuses.values
           .any((element) => element.serviceStatus == ServiceStatus.disabled);
+      final itemText = e.itemText;
+      final serviceText = e.serviceItemText;
+      final permission = e.permissions.first;
 
-      return serviceText != null && serviceDisabled
-          ? [
-              _PermissionItem(perm, serviceText),
-              _PermissionItem(perm, e.itemText),
-            ]
-          : [_PermissionItem(perm, e.itemText)];
+      final List<_PermissionItem> result = [];
+      if (serviceDisabled && serviceText != null) {
+        result.add(_PermissionItem(permission, serviceText));
+      }
+      if (denied) {
+        result.add(_PermissionItem(permission, itemText));
+      }
+
+      return result;
     }).toList();
 
     return Scaffold(
@@ -225,7 +227,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                 break;
               }
               // ignore: avoid-ignoring-return-values, not needed.
-              await resumed.stream.firstWhere((element) => element);
+              await widget._resumed.stream.firstWhere((element) => element);
               serviceStatus = await widget._service.serviceStatus(perm);
             }
           }
@@ -242,7 +244,7 @@ class _DisclosurePageState extends State<DisclosurePage>
               _showAppSettings,
             );
             // ignore: avoid-ignoring-return-values, not needed.
-            await resumed.stream.firstWhere((element) => element);
+            await widget._resumed.stream.firstWhere((element) => element);
             permStatus = await widget._service.status(perm);
           }
         }
@@ -289,6 +291,7 @@ class _DisclosurePageState extends State<DisclosurePage>
   Future<void> _showPhoneSettings() async {
     final navigator = Navigator.of(context);
 
+    // TODO(peter): find function to open phone settings directly if possible.
     await widget._service.openAppSettings();
 
     navigator.pop();
