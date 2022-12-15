@@ -28,5 +28,6 @@ class PermissionItemText {
   final ForcedPermissionDialogConfig? forcedPermissionDialogConfig;
 
   @override
-  String toString() => 'PermissionItemText{header: $header, icon: $icon, rationaleText: $rationaleText, forcedPermissionDialogConfig: $forcedPermissionDialogConfig}';
+  String toString() =>
+      'PermissionItemText{header: $header, icon: $icon, rationaleText: $rationaleText, forcedPermissionDialogConfig: $forcedPermissionDialogConfig}';
 }

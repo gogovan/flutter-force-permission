@@ -16,5 +16,4 @@ class ForcedPermissionDialogConfig {
 
   /// The text of the confirm button shown for the dialog when requesting users to go to Settings page.
   final String buttonText;
-
 }

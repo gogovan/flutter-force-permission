@@ -13,7 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 /// Show permission disclosure page and allows required permissions before user can proceed.
 class FlutterForcePermission {
   /// Constructor. Pass configuration here. Refer to [FlutterForcePermissionConfig] for details.
-  FlutterForcePermission(this.config): _service = const TestStub();
+  FlutterForcePermission(this.config) : _service = const TestStub();
 
   @visibleForTesting
   FlutterForcePermission.stub(this.config, this._service);
