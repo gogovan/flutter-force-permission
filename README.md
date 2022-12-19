@@ -51,7 +51,7 @@ final perm = FlutterForcePermission(
   );
 ```
 2. Show the disclosure page as needed. This method will handle showing the disclosure page and requesting permissions.
-This function takes a [NavigatorState] which can be retrieved through `Navigator.of(context)` call.
+This function takes a [NavigatorState](https://api.flutter.dev/flutter/widgets/NavigatorState-class.html) which can be retrieved through `Navigator.of(context)` call.
 This is an async function. Wrap the function in an `async` block as needed.
 Returns a map of permission and their requested status (granted/denied/etc). Refer to [permission_handler](https://pub.dev/packages/permission_handler) for the interface.
 ```dart
@@ -59,7 +59,7 @@ final result = await perm.show(Navigator.of(context));
 ```
 
 ### Styling
-You can set the style of the text shown by setting up a [TextTheme] of the provided context. 
+You can set the style of the text shown by setting up a [TextTheme](https://api.flutter.dev/flutter/material/TextTheme-class.html) of the provided context. 
 - Title uses `headline6` text style.
 - Item header use `subtitle1` text style.
 - Item body use `bodyText2` text style.
