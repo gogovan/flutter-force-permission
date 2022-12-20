@@ -12,7 +12,9 @@ jobs:
           channel: 'stable'
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter pub run build_runner build
 
       - name: Check code is formatted
         run: |
@@ -25,5 +27,10 @@ jobs:
       - name: Dart Code Metrics Analysis
         run: flutter pub run dart_code_metrics:metrics analyze lib --fatal-style --fatal-warnings --fatal-performance --set-exit-on-violation-level=warning
 
-      - name: Run tests
-        run: flutter test
+      - name: Run tests and generate coverage report
+        run: flutter test --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./coverage

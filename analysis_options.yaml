@@ -179,10 +179,8 @@ dart_code_metrics:
   #    weight-of-class: 0.33 # Number of functional public methods divided by the total number of public methods.
   metrics-exclude:
     - test/**
-    - lib/views/**
+    - lib/src/views/**
     - lib/main.dart
-    - lib/models/**
-    - lib/model_extensions/**
   rules:
     # Common
     - avoid-banned-imports # Configure some imports that you want to ban, ref: https://dartcodemetrics.dev/docs/rules/common/avoid-banned-imports
