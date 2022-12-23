@@ -16,7 +16,7 @@ class PermissionItemText {
   /// The Icon for the permission item.
   ///
   /// If omitted, a default icon will be provided.
-  final Icon? icon;
+  final Widget? icon;
 
   /// Detailed text for the permission.
   ///
