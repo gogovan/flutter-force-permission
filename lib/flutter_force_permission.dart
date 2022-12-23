@@ -23,9 +23,12 @@ class FlutterForcePermission {
 
   final TestStub _service;
 
+  var bool _showing;
+
   /// Show disclosure page.
   ///
   /// This will show the disclosure page according to the provided configuration, and handles requesting permissions.
+  /// If the disclosure page is already shown, it will do nothing.
   /// Returns a map of Permission and their status after requesting the permissions.
   /// Only permissions specified in the configuration will be included in the return value.
   Future<Map<Permission, PermissionServiceStatus>> show(
@@ -33,6 +36,8 @@ class FlutterForcePermission {
   ) async {
     // Check for permissions.
     final permissionStatuses = await getPermissionStatuses();
+    if (_showing) return permissionStatuses;
+    _showing = true;
 
     if (permissionStatuses.values
         .every((element) => element.status == PermissionStatus.granted)) {
@@ -71,6 +76,8 @@ class FlutterForcePermission {
         ),
       ),
     );
+
+    _showing = false;
 
     // Check for permission status again as it is likely updated.
     return getPermissionStatuses();
