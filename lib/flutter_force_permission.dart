@@ -23,7 +23,7 @@ class FlutterForcePermission {
 
   final TestStub _service;
 
-  var bool _showing;
+  bool _showing = false;
 
   /// Show disclosure page.
   ///
