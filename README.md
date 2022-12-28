@@ -17,10 +17,22 @@ dependencies:
   permission_handler: ^10.2.0
 ```
 2. This package depends on [permission_handler](https://pub.dev/packages/permission_handler). Perform setup according to that package.
-3. If any features is required, it is highly recommended to also set the `<uses-feature>` tag in AndroidManifest.xml. Refer to [relevant Android Developers page](https://developer.android.com/guide/topics/manifest/uses-feature-element) for details. 
+3. On Android, if you use `POST_NOTIFICATIONS` permission, update the `targetSdkVersion` in `build.gradle` to at least 33 so that the permission request dialog is shown correctly. Refer to [relevant Android Developer page](https://developer.android.com/develop/ui/views/notifications/notification-permission) for details.
+```groovy
+android {
+    // ...
+    defaultConfig {
+        compileSdkVersion 33
+        targetSdkVersion 33
+        // ...
+    }
+    // ...
+}
+```
+4. If any features is required, it is highly recommended to also set the `<uses-feature>` tag in AndroidManifest.xml. Refer to [relevant Android Developers page](https://developer.android.com/guide/topics/manifest/uses-feature-element) for details. 
 
 ## Usage
-1. Create an instance of FlutterForcePermission, providing configuration.
+1. Create an instance of FlutterForcePermission, providing configuration. Refer to documentation for [FlutterForcePermissionConfig] for details.
 ```dart
 final perm = FlutterForcePermission(
     FlutterForcePermissionConfig(
