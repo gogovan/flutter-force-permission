@@ -21,16 +21,19 @@ class PermissionItemConfig {
   /// The display item configuration for these permission(s). Refer to [PermissionItemText] for details.
   final PermissionItemText itemText;
 
-  /// If the permission has an associated service (e.g. location), this service
-  /// will also be checked for availability.
+  /// If the permission has an associated service (e.g. location) and this permission is required,
+  /// this service will also be checked for availability.
   /// If service is unavailable and this item is not null, the disclosure page will
   /// show a disclosure item for this service, before `itemText`.
-  /// If this permission is required, users will also be asked to enable the service.
+  /// Users will also be asked to enable the service.
+  ///
+  /// *Note*: This is used only when `required` is true.
   final PermissionItemText? serviceItemText;
 
   /// Whether these permission(s) are required.
   ///
-  /// If it is required, users cannot migrate out of disclosure page until the permission is granted. `forcedPermissionDialogConfig` should include configuration for the
+  /// If it is required, users cannot migrate out of disclosure page until the permission is granted.
+  /// `forcedPermissionDialogConfig` under `itemText` should include configuration for the
   /// dialog shown when required permission are denied.
   final bool required;
 }

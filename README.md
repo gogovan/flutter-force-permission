@@ -32,7 +32,7 @@ android {
 4. If any features is required, it is highly recommended to also set the `<uses-feature>` tag in AndroidManifest.xml. Refer to [relevant Android Developers page](https://developer.android.com/guide/topics/manifest/uses-feature-element) for details. 
 
 ## Usage
-1. Create an instance of FlutterForcePermission, providing configuration.
+1. Create an instance of FlutterForcePermission, providing configuration. Refer to documentation for [FlutterForcePermissionConfig] for details.
 ```dart
 final perm = FlutterForcePermission(
     FlutterForcePermissionConfig(
