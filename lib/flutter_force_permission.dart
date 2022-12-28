@@ -59,6 +59,12 @@ class FlutterForcePermission {
           needShow = true;
           break;
         }
+        if (perm is PermissionWithService &&
+            permissionStatuses[perm]?.serviceStatus == ServiceStatus.disabled &&
+            permConfig.required) {
+          needShow = true;
+          break;
+        }
       }
     }
 
