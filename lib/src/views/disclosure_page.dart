@@ -240,9 +240,9 @@ class _DisclosurePageState extends State<DisclosurePage>
         // ignore: avoid-ignoring-return-values, not needed.
         await prefs.setBool(getRequestedPrefKey(perm), true);
       }
-
-      navigator.pop();
     }
+
+    navigator.pop();
   }
 
   Future<void> _showRequiredPermDialog(
