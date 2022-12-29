@@ -45,29 +45,6 @@ class DisclosurePage extends StatefulWidget {
   State<DisclosurePage> createState() => _DisclosurePageState();
 }
 
-@immutable
-class _PermissionItem {
-  const _PermissionItem(this.permission, this.itemText);
-
-  final Permission permission;
-  final PermissionItemText itemText;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _PermissionItem &&
-          runtimeType == other.runtimeType &&
-          permission == other.permission &&
-          itemText == other.itemText;
-
-  @override
-  int get hashCode => permission.hashCode ^ itemText.hashCode;
-
-  @override
-  String toString() =>
-      '_PermissionItem{permission: $permission, itemText: $itemText}';
-}
-
 class _DisclosurePageState extends State<DisclosurePage>
     with
         // ignore: prefer_mixin, WidgetsBindingObserver is Framework code
@@ -94,6 +71,37 @@ class _DisclosurePageState extends State<DisclosurePage>
     super.dispose();
   }
 
+  List<PermissionItemConfig> _getRequestingPermissions() =>
+      widget.permissionConfig.permissionItemConfigs.expand((e) {
+        var denied = false;
+        var requested = false;
+        var serviceDisabled = false;
+        for (final Permission p in e.permissions) {
+          if (widget.permissionStatuses[p]?.status !=
+              PermissionStatus.granted) {
+            denied = true;
+          }
+          if (widget.permissionStatuses[p]?.requested ?? true) {
+            requested = true;
+          }
+          if (widget.permissionStatuses[p]?.serviceStatus ==
+              ServiceStatus.disabled) {
+            serviceDisabled = true;
+          }
+        }
+        final serviceText = e.serviceItemText;
+
+        final List<PermissionItemConfig> result = [];
+        if (serviceDisabled && serviceText != null) {
+          result.add(e);
+        }
+        if (denied && (!requested || e.required)) {
+          result.add(e);
+        }
+
+        return result;
+      }).toList();
+
   @override
   Widget build(BuildContext context) {
     final titleWidget = Column(
@@ -107,37 +115,7 @@ class _DisclosurePageState extends State<DisclosurePage>
       ],
     );
 
-    final permissionItems =
-        widget.permissionConfig.permissionItemConfigs.expand((e) {
-      var denied = false;
-      var requested = false;
-      var serviceDisabled = false;
-      for (final Permission p in e.permissions) {
-        if (widget.permissionStatuses[p]?.status != PermissionStatus.granted) {
-          denied = true;
-        }
-        if (widget.permissionStatuses[p]?.requested ?? true) {
-          requested = true;
-        }
-        if (widget.permissionStatuses[p]?.serviceStatus ==
-            ServiceStatus.disabled) {
-          serviceDisabled = true;
-        }
-      }
-      final itemText = e.itemText;
-      final serviceText = e.serviceItemText;
-      final permission = e.permissions.first;
-
-      final List<_PermissionItem> result = [];
-      if (serviceDisabled && serviceText != null) {
-        result.add(_PermissionItem(permission, serviceText));
-      }
-      if (denied && (!requested || e.required)) {
-        result.add(_PermissionItem(permission, itemText));
-      }
-
-      return result;
-    }).toList();
+    final permissionItems = _getRequestingPermissions();
 
     return Scaffold(
       body: Column(
@@ -215,8 +193,7 @@ class _DisclosurePageState extends State<DisclosurePage>
 
     // Request permissions one by one because in some cases requesting
     // multiple permissions does not ask the user as expected.
-    for (final PermissionItemConfig permConfig
-        in widget.permissionConfig.permissionItemConfigs) {
+    for (final PermissionItemConfig permConfig in _getRequestingPermissions()) {
       for (final Permission perm in permConfig.permissions) {
         if (permConfig.required && perm is PermissionWithService) {
           final text = permConfig.serviceItemText;
@@ -263,9 +240,9 @@ class _DisclosurePageState extends State<DisclosurePage>
         // ignore: avoid-ignoring-return-values, not needed.
         await prefs.setBool(getRequestedPrefKey(perm), true);
       }
-    }
 
-    navigator.pop();
+      navigator.pop();
+    }
   }
 
   Future<void> _showRequiredPermDialog(
