@@ -45,12 +45,10 @@ class FlutterForcePermission {
       return permissionStatuses;
     }
 
-    final prefs = await _service.getSharedPreference();
     var needShow = false;
     for (final permConfig in config.permissionItemConfigs) {
       for (final perm in permConfig.permissions) {
-        final requested = prefs.getBool(getRequestedPrefKey(perm));
-        if (requested != true) {
+        if (!(permissionStatuses[perm]?.requested ?? true)) {
           needShow = true;
           break;
         }
@@ -94,17 +92,20 @@ class FlutterForcePermission {
   /// Only permissions specified in the configuration will be queried and returned.
   Future<Map<Permission, PermissionServiceStatus>>
       getPermissionStatuses() async {
+    final prefs = await _service.getSharedPreference();
     final Map<Permission, PermissionServiceStatus> result = {};
     for (final List<Permission> perms
         in config.permissionItemConfigs.map((e) => e.permissions)) {
       for (final Permission perm in perms) {
         final status = await _service.status(perm);
+        final requested = prefs.getBool(getRequestedPrefKey(perm)) ?? false;
         ServiceStatus? serviceStatus;
         if (perm is PermissionWithService) {
           serviceStatus = await _service.serviceStatus(perm);
         }
         result[perm] = PermissionServiceStatus(
           status: status,
+          requested: requested,
           serviceStatus: serviceStatus,
         );
       }

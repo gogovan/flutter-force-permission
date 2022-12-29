@@ -110,10 +110,14 @@ class _DisclosurePageState extends State<DisclosurePage>
     final permissionItems =
         widget.permissionConfig.permissionItemConfigs.expand((e) {
       var denied = false;
+      var requested = false;
       var serviceDisabled = false;
       for (final Permission p in e.permissions) {
         if (widget.permissionStatuses[p]?.status != PermissionStatus.granted) {
           denied = true;
+        }
+        if (widget.permissionStatuses[p]?.requested ?? true) {
+          requested = true;
         }
         if (widget.permissionStatuses[p]?.serviceStatus ==
             ServiceStatus.disabled) {
@@ -128,7 +132,7 @@ class _DisclosurePageState extends State<DisclosurePage>
       if (serviceDisabled && serviceText != null) {
         result.add(_PermissionItem(permission, serviceText));
       }
-      if (denied) {
+      if (denied && !requested) {
         result.add(_PermissionItem(permission, itemText));
       }
 
