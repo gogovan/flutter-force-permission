@@ -132,7 +132,7 @@ class _DisclosurePageState extends State<DisclosurePage>
       if (serviceDisabled && serviceText != null) {
         result.add(_PermissionItem(permission, serviceText));
       }
-      if (denied && !requested) {
+      if (denied && (!requested || e.required)) {
         result.add(_PermissionItem(permission, itemText));
       }
 
