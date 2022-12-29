@@ -49,6 +49,7 @@ void main() {
     final status = <Permission, PermissionServiceStatus>{
       Permission.location: PermissionServiceStatus(
         status: PermissionStatus.denied,
+        requested: false,
         serviceStatus: ServiceStatus.enabled,
       ),
     };
@@ -111,6 +112,7 @@ void main() {
     final status = <Permission, PermissionServiceStatus>{
       Permission.location: PermissionServiceStatus(
         status: PermissionStatus.denied,
+        requested: false,
         serviceStatus: ServiceStatus.enabled,
       ),
     };
@@ -175,6 +177,7 @@ void main() {
     final status = <Permission, PermissionServiceStatus>{
       Permission.location: PermissionServiceStatus(
         status: PermissionStatus.denied,
+        requested: false,
         serviceStatus: ServiceStatus.enabled,
       ),
     };
@@ -269,6 +272,7 @@ void main() {
     final status = <Permission, PermissionServiceStatus>{
       Permission.location: PermissionServiceStatus(
         status: PermissionStatus.granted,
+        requested: false,
         serviceStatus: ServiceStatus.disabled,
       ),
     };
