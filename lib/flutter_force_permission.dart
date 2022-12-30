@@ -48,12 +48,9 @@ class FlutterForcePermission {
     var needShow = false;
     for (final permConfig in config.permissionItemConfigs) {
       for (final perm in permConfig.permissions) {
-        if (!(permissionStatuses[perm]?.requested ?? true)) {
-          needShow = true;
-          break;
-        }
         if (permissionStatuses[perm]?.status != PermissionStatus.granted &&
-            permConfig.required) {
+            (permConfig.required ||
+                !(permissionStatuses[perm]?.requested ?? true))) {
           needShow = true;
           break;
         }
