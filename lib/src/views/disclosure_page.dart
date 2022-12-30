@@ -45,6 +45,16 @@ class DisclosurePage extends StatefulWidget {
   State<DisclosurePage> createState() => _DisclosurePageState();
 }
 
+class _DisplayItem {
+  _DisplayItem({
+    required this.config,
+    required this.isService,
+  });
+
+  final PermissionItemConfig config;
+  final bool isService;
+}
+
 class _DisclosurePageState extends State<DisclosurePage>
     with
         // ignore: prefer_mixin, WidgetsBindingObserver is Framework code
@@ -71,7 +81,7 @@ class _DisclosurePageState extends State<DisclosurePage>
     super.dispose();
   }
 
-  List<PermissionItemConfig> _getRequestingPermissions() =>
+  List<_DisplayItem> _getRequestingPermissions() =>
       widget.permissionConfig.permissionItemConfigs.expand((e) {
         var denied = false;
         var requested = false;
@@ -91,12 +101,12 @@ class _DisclosurePageState extends State<DisclosurePage>
         }
         final serviceText = e.serviceItemText;
 
-        final List<PermissionItemConfig> result = [];
-        if (serviceDisabled && serviceText != null) {
-          result.add(e);
+        final List<_DisplayItem> result = [];
+        if (serviceDisabled && serviceText != null && e.required) {
+          result.add(_DisplayItem(config: e, isService: true));
         }
         if (denied && (!requested || e.required)) {
-          result.add(e);
+          result.add(_DisplayItem(config: e, isService: false));
         }
 
         return result;
@@ -130,7 +140,8 @@ class _DisclosurePageState extends State<DisclosurePage>
                   return titleWidget;
                 } else {
                   final item = permissionItems[index - 1];
-                  var icon = item.itemText.icon;
+                  final config = item.isService ? item.config.serviceItemText : item.config.itemText;
+                  var icon = config?.icon;
                   icon ??= Icon(
                     Icons.perm_device_info_sharp,
                     color: Theme.of(context).primaryColor,
@@ -148,7 +159,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                             children: [
                               Flexible(
                                 child: Text(
-                                  item.itemText.header,
+                                  config?.header ?? '',
                                   style: Theme.of(context).textTheme.subtitle1,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
@@ -157,7 +168,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                               ),
                               Flexible(
                                 child: Text(
-                                  item.itemText.rationaleText,
+                                  config?.rationaleText ?? '',
                                   style: Theme.of(context).textTheme.bodyText2,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
@@ -193,52 +204,56 @@ class _DisclosurePageState extends State<DisclosurePage>
 
     // Request permissions one by one because in some cases requesting
     // multiple permissions does not ask the user as expected.
-    for (final PermissionItemConfig permConfig in _getRequestingPermissions()) {
-      for (final Permission perm in permConfig.permissions) {
-        if (permConfig.required && perm is PermissionWithService) {
-          final text = permConfig.serviceItemText;
-          if (text != null) {
-            var serviceStatus = await widget._service.serviceStatus(perm);
-            while (serviceStatus == ServiceStatus.disabled) {
-              if (perm == Permission.phone) {
-                await _showRequiredPermDialog(text, _showPhoneSettings);
-              } else if (perm == Permission.location ||
-                  perm == Permission.locationAlways ||
-                  perm == Permission.locationWhenInUse) {
-                await _showRequiredPermDialog(text, _showLocationSettings);
-              } else {
-                if (kDebugMode) {
-                  print(
-                    '[flutter-force-permission] WARN: Unsupported Permission with service $perm found.',
-                  );
+    for (final _DisplayItem item in _getRequestingPermissions()) {
+      if (item.isService) {
+        final text = item.config.serviceItemText;
+        if (text != null) {
+          for (final Permission perm in item.config.permissions) {
+            if (perm is PermissionWithService) {
+              var serviceStatus = await widget._service.serviceStatus(perm);
+              while (serviceStatus == ServiceStatus.disabled) {
+                if (perm == Permission.phone) {
+                  await _showRequiredPermDialog(text, _showPhoneSettings);
+                } else if (perm == Permission.location ||
+                    perm == Permission.locationAlways ||
+                    perm == Permission.locationWhenInUse) {
+                  await _showRequiredPermDialog(text, _showLocationSettings);
+                } else {
+                  if (kDebugMode) {
+                    print(
+                      '[flutter-force-permission] WARN: Unsupported Permission with service $perm found.',
+                    );
+                  }
+                  break;
                 }
-                break;
+                // ignore: avoid-ignoring-return-values, not needed.
+                await widget._resumed.stream.firstWhere((element) => element);
+                serviceStatus = await widget._service.serviceStatus(perm);
               }
-              // ignore: avoid-ignoring-return-values, not needed.
-              await widget._resumed.stream.firstWhere((element) => element);
-              serviceStatus = await widget._service.serviceStatus(perm);
             }
           }
         }
+      } else {
+        for (final Permission perm in item.config.permissions) {
+          // ignore: avoid-ignoring-return-values, not needed.
+          await widget._service.request(perm);
 
-        // ignore: avoid-ignoring-return-values, not needed.
-        await widget._service.request(perm);
-
-        if (permConfig.required) {
-          var permStatus = await widget._service.status(perm);
-          while (permStatus != PermissionStatus.granted) {
-            await _showRequiredPermDialog(
-              permConfig.itemText,
-              _showAppSettings,
-            );
-            // ignore: avoid-ignoring-return-values, not needed.
-            await widget._resumed.stream.firstWhere((element) => element);
-            permStatus = await widget._service.status(perm);
+          if (item.config.required) {
+            var permStatus = await widget._service.status(perm);
+            while (permStatus != PermissionStatus.granted) {
+              await _showRequiredPermDialog(
+                item.config.itemText,
+                _showAppSettings,
+              );
+              // ignore: avoid-ignoring-return-values, not needed.
+              await widget._resumed.stream.firstWhere((element) => element);
+              permStatus = await widget._service.status(perm);
+            }
           }
-        }
 
-        // ignore: avoid-ignoring-return-values, not needed.
-        await prefs.setBool(getRequestedPrefKey(perm), true);
+          // ignore: avoid-ignoring-return-values, not needed.
+          await prefs.setBool(getRequestedPrefKey(perm), true);
+        }
       }
     }
 
