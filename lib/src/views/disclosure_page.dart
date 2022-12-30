@@ -140,7 +140,9 @@ class _DisclosurePageState extends State<DisclosurePage>
                   return titleWidget;
                 } else {
                   final item = permissionItems[index - 1];
-                  final config = item.isService ? item.config.serviceItemText : item.config.itemText;
+                  final config = item.isService
+                      ? item.config.serviceItemText
+                      : item.config.itemText;
                   var icon = config?.icon;
                   icon ??= Icon(
                     Icons.perm_device_info_sharp,
