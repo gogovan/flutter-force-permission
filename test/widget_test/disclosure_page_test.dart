@@ -30,6 +30,8 @@ void main() {
         .thenAnswer((realInvocation) => Future.value(prefs));
     when(testStub.request(Permission.location))
         .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
+    when(testStub.status(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
 
     final config = FlutterForcePermissionConfig(
       title: 'Title',

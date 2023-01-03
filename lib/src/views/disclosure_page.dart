@@ -237,11 +237,16 @@ class _DisclosurePageState extends State<DisclosurePage>
         }
       } else {
         for (final Permission perm in item.config.permissions) {
-          // ignore: avoid-ignoring-return-values, not needed.
-          await widget._service.request(perm);
+          // ignore: prefer-moving-to-variable, multiple calls needed to ensure up-to-date data.
+          var permStatus = await widget._service.status(perm);
+          if (permStatus != PermissionStatus.permanentlyDenied) {
+            // ignore: avoid-ignoring-return-values, not needed.
+            await widget._service.request(perm);
+          }
 
           if (item.config.required) {
-            var permStatus = await widget._service.status(perm);
+            // ignore: prefer-moving-to-variable, multiple calls needed to ensure up-to-date data.
+            permStatus = await widget._service.status(perm);
             while (permStatus != PermissionStatus.granted) {
               await _showRequiredPermDialog(
                 item.config.itemText,
@@ -249,6 +254,7 @@ class _DisclosurePageState extends State<DisclosurePage>
               );
               // ignore: avoid-ignoring-return-values, not needed.
               await widget._resumed.stream.firstWhere((element) => element);
+              // ignore: prefer-moving-to-variable, multiple calls needed to ensure up-to-date data.
               permStatus = await widget._service.status(perm);
             }
           }
