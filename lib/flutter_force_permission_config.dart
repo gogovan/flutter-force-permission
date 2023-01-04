@@ -3,7 +3,13 @@ library flutter_force_permission;
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 
-typedef ShowDialogCallback = void Function(BuildContext context, String title, String content, String buttonText, VoidCallback callback);
+typedef ShowDialogCallback = void Function(
+  BuildContext context,
+  String title,
+  String content,
+  String buttonText,
+  VoidCallback callback,
+);
 
 /// Configuration for Flutter Force Permission.
 class FlutterForcePermissionConfig {
