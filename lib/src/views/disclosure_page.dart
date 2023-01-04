@@ -272,6 +272,7 @@ class _DisclosurePageState extends State<DisclosurePage>
     PermissionItemText permConfig,
     VoidCallback openSettings,
   ) async {
+    final navigator = Navigator.of(context);
     final dialogConfig = permConfig.forcedPermissionDialogConfig;
     final callback = widget.permissionConfig.showDialogCallback;
 
@@ -291,7 +292,10 @@ class _DisclosurePageState extends State<DisclosurePage>
             ),
             actions: [
               TextButton(
-                onPressed: openSettings,
+                onPressed: () {
+                  openSettings();
+                  navigator.pop();
+                },
                 child: Text(
                   dialogConfig?.buttonText ?? '',
                 ),
