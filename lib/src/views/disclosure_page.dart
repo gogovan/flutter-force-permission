@@ -302,6 +302,7 @@ class _DisclosurePageState extends State<DisclosurePage>
       );
     } else {
       callback(
+        context,
         dialogConfig?.title ?? '',
         dialogConfig?.text ?? '',
         dialogConfig?.buttonText ?? '',

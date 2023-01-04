@@ -1,23 +1,35 @@
 # flutter-force-permission
+
 [![codecov](https://codecov.io/gh/gogovan/flutter-force-permission/branch/main/graph/badge.svg?token=F9DPJUAVAJ)](https://codecov.io/gh/gogovan/flutter-force-permission)
 
-Show permission disclosure page and allows required permissions and their associated services before the user can proceed.
+Show permission disclosure page and allows required permissions and their associated services before
+the user can proceed.
 
-This package shows a prominent in-app disclosure page for getting permissions as required by [Google Play](https://support.google.com/googleplay/android-developer/answer/9799150?visit_id=638041800350153935-369621111&p=pd-m&rd=1#prominent_disclosure&zippy=%2Cstep-provide-prominent-in-app-disclosure%2Cstep-review-best-practices-for-accessing-location%2Cstep-consider-alternatives-to-accessing-location-in-the-background%2Cstep-make-access-to-location-in-the-background-clear-to-users%2Csee-an-example-of-prominent-in-app-disclosure).
-Also support iOS to ensure a consistent experience.
+This package shows a prominent in-app disclosure page for getting permissions as required
+by [Google Play](https://support.google.com/googleplay/android-developer/answer/9799150?visit_id=638041800350153935-369621111&p=pd-m&rd=1#prominent_disclosure&zippy=%2Cstep-provide-prominent-in-app-disclosure%2Cstep-review-best-practices-for-accessing-location%2Cstep-consider-alternatives-to-accessing-location-in-the-background%2Cstep-make-access-to-location-in-the-background-clear-to-users%2Csee-an-example-of-prominent-in-app-disclosure)
+. Also support iOS to ensure a consistent experience.
 
-In addition, permissions and their associated services (e.g. GPS) can be set as "required". If this is set, those required permissions will 
-be required and if users denied it, this package will show a customizable dialog and redirect user to the appropriate settings page provided by the native OS.
+In addition, permissions and their associated services (e.g. GPS) can be set as "required". If this
+is set, those required permissions will be required and if users denied it, this package will show a
+customizable dialog and redirect user to the appropriate settings page provided by the native OS.
 
 ## Setup
+
 1. Add the following to `pubspec.yaml`
+
 ```yaml
 dependencies:
   flutter_force_permission: ^0.1.0
   permission_handler: ^10.2.0
 ```
-2. This package depends on [permission_handler](https://pub.dev/packages/permission_handler). Perform setup according to that package.
-3. On Android, if you use `POST_NOTIFICATIONS` permission, update the `targetSdkVersion` in `build.gradle` to at least 33 so that the permission request dialog is shown correctly. Refer to [relevant Android Developer page](https://developer.android.com/develop/ui/views/notifications/notification-permission) for details.
+
+2. This package depends on [permission_handler](https://pub.dev/packages/permission_handler).
+   Perform setup according to that package.
+3. On Android, if you use `POST_NOTIFICATIONS` permission, update the `targetSdkVersion`
+   in `build.gradle` to at least 33 so that the permission request dialog is shown correctly. Refer
+   to [relevant Android Developer page](https://developer.android.com/develop/ui/views/notifications/notification-permission)
+   for details.
+
 ```groovy
 android {
     // ...
@@ -29,52 +41,134 @@ android {
     // ...
 }
 ```
-4. If any features is required, it is highly recommended to also set the `<uses-feature>` tag in AndroidManifest.xml. Refer to [relevant Android Developers page](https://developer.android.com/guide/topics/manifest/uses-feature-element) for details. 
+
+4. If any features is required, it is highly recommended to also set the `<uses-feature>` tag in
+   AndroidManifest.xml. Refer
+   to [relevant Android Developers page](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+   for details.
 
 ## Usage
-1. Create an instance of FlutterForcePermission, providing configuration. Refer to documentation for [FlutterForcePermissionConfig] for details.
+
+1. Create an instance of FlutterForcePermission, providing configuration. Refer to documentation
+   for [FlutterForcePermissionConfig] for details.
+
 ```dart
+
 final perm = FlutterForcePermission(
-    FlutterForcePermissionConfig(
-      title: 'Title',
-      permissionItemConfigs: [
-        PermissionItemConfig(
-          permissions: [Permission.locationWhenInUse],
-          required: true,
-          itemText: PermissionItemText(
-            header: 'Foreground Location',
-            rationaleText: 'Rationale for Foreground location. Required.',
-            forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
-              title: 'Please enable location permission',
-              text: 'Please enable location permission for proper usage.',
-              buttonText: 'Settings',
-            ),
+  FlutterForcePermissionConfig(
+    title: 'Title',
+    permissionItemConfigs: [
+      PermissionItemConfig(
+        permissions: [Permission.locationWhenInUse],
+        required: true,
+        itemText: PermissionItemText(
+          header: 'Foreground Location',
+          rationaleText: 'Rationale for Foreground location. Required.',
+          forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+            title: 'Please enable location permission',
+            text: 'Please enable location permission for proper usage.',
+            buttonText: 'Settings',
           ),
         ),
-        PermissionItemConfig(
-          permissions: [Permission.locationAlways],
-          itemText: PermissionItemText(
-            header: 'Background Location',
-            rationaleText: 'Rationale for Background location. lorem ipsum dolor sit amet.',
-          ),
+      ),
+      PermissionItemConfig(
+        permissions: [Permission.locationAlways],
+        itemText: PermissionItemText(
+          header: 'Background Location',
+          rationaleText: 'Rationale for Background location. lorem ipsum dolor sit amet.',
         ),
-      ],
-    ),
-  );
+      ),
+    ],
+  ),
+);
 ```
-2. Show the disclosure page as needed. This method will handle showing the disclosure page and requesting permissions.
-This function takes a [NavigatorState](https://api.flutter.dev/flutter/widgets/NavigatorState-class.html) which can be retrieved through `Navigator.of(context)` call.
-This is an async function. Wrap the function in an `async` block as needed.
-Returns a map of permission and their requested status (granted/denied/etc), service status and whether they are requested by this plugin.
+
+2. Show the disclosure page as needed. This method will handle showing the disclosure page and
+   requesting permissions. This function takes
+   a [NavigatorState](https://api.flutter.dev/flutter/widgets/NavigatorState-class.html) which can
+   be retrieved through `Navigator.of(context)` call. This is an async function. Wrap the function
+   in an `async` block as needed. Returns a map of permission and their requested status (
+   granted/denied/etc), service status and whether they are requested by this plugin.
+
 ```dart
-final result = await perm.show(Navigator.of(context));
+
+final result = await
+perm.show(Navigator.of(context));
 ```
 
 ### Styling
-You can set the style of the text shown by setting up a [TextTheme](https://api.flutter.dev/flutter/material/TextTheme-class.html) of the provided context. 
+
+You can set the style of the text shown by setting up
+a [TextTheme](https://api.flutter.dev/flutter/material/TextTheme-class.html) of the provided
+context.
+
 - Title uses `headline6` text style.
 - Item header use `subtitle1` text style.
 - Item body use `bodyText2` text style.
+
+## Advanced Usage
+
+### Customize the required permission denied prompt
+
+If you wish to customize the dialog shown when the required permission is denied, provide
+a `showDialogCallback` which to show your dialog. Parameters are included for you to compose the
+appropriate dialog. In your callback, you SHOULD:
+
+1. Display a non-dismissable dialog. This can be typically achieved by setting `barrierDismissible`
+   to false and provide an empty callback e.g. (`() async => false`) to `willPopCallback` for your
+   dialog.
+2. Call the provided `callback` parameter in your callback when the user click the confirm button,
+   and dismiss your dialog by `Navigator.pop`.
+
+```dart
+
+final config = FlutterForcePermissionConfig(
+  title: 'Title',
+  confirmText: 'Confirm',
+  permissionItemConfigs: [
+    PermissionItemConfig(
+      permissions: [
+        Permission.location,
+      ],
+      itemText: PermissionItemText(
+        header: 'Foreground location',
+        rationaleText: 'Rationale',
+        forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+          title: 'Location required',
+          text: 'Location needed for proper operation',
+          buttonText: 'Settings',
+        ),
+      ),
+      required: true,
+    ),
+  ],
+  showDialogCallback: (context, title, text, button, callback) {
+    // Store the navigator to avoid storing contexts across async gaps. See https://stackoverflow.com/a/69512692/11675817 for details.
+    final navigator = Navigator.of(context);
+    // Show your dialog.
+    showDialog(context: context,
+      barrierDismissible: false,
+      builder: (context) =>
+          WillPopScope(
+            onWillPop: () async => false,
+            child: AlertDialog(
+              title: Text(title),
+              content: Text(text),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    callback();
+                    navigator.pop();
+                  },
+                  child: Text(button),
+                ),
+              ],
+            ),
+          ),
+    );
+  },
+);
+```
 
 ## Issues
 

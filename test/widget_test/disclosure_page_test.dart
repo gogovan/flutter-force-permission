@@ -443,7 +443,7 @@ void main() {
           required: true,
         ),
       ],
-      showDialogCallback: (title, text, button, callback) {
+      showDialogCallback: (context, title, text, button, callback) {
         callback();
       },
     );
