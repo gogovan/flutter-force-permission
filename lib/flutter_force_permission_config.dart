@@ -1,6 +1,9 @@
 library flutter_force_permission;
 
+import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
+
+typedef ShowDialogCallback = void Function(String title, String content, String buttonText, VoidCallback callback);
 
 /// Configuration for Flutter Force Permission.
 class FlutterForcePermissionConfig {
@@ -8,6 +11,7 @@ class FlutterForcePermissionConfig {
     required this.title,
     required this.confirmText,
     required this.permissionItemConfigs,
+    this.showDialogCallback,
   });
 
   /// The title for the disclosure page.
@@ -21,4 +25,16 @@ class FlutterForcePermissionConfig {
   /// The list ordering dictates the order of the permissions requested in the disclosure page and the order the OS shows the permission dialogs.
   /// See [PermissionItemConfig] for details.
   final List<PermissionItemConfig> permissionItemConfigs;
+
+  /// Optional callback to show a custom dialog. If you wish to use dialogs other than
+  /// the provided Material Design dialogs, provide a callback in this parameter.
+  /// The parameters provided to the callback consists of all the texts to be shown
+  /// as `title`, `content` and the confirm button `buttonText` respectively, as well
+  /// as a `callback` for you to call when the confirm button is clicked.
+  ///
+  /// This callback SHOULD invoke the provided `callback` in your callback to ensure proper functionality by invoking system OS settings.
+  /// The dialog shown during your callback SHOULD NOT be dismissable. It is typically
+  /// achieved by setting `barrierDismissible` to false and provide an empty callback
+  /// e.g. (`() async => false`) to `willPopCallback` for your dialog.
+  final ShowDialogCallback? showDialogCallback;
 }

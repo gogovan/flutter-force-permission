@@ -273,54 +273,53 @@ class _DisclosurePageState extends State<DisclosurePage>
     VoidCallback openSettings,
   ) async {
     final dialogConfig = permConfig.forcedPermissionDialogConfig;
-    // ignore: avoid-ignoring-return-values, not needed.
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => WillPopScope(
-        onWillPop: () async => false,
-        child: AlertDialog(
-          title: Text(
-            dialogConfig?.title ?? '',
-          ),
-          content: Text(
-            dialogConfig?.text ?? '',
-          ),
-          actions: [
-            TextButton(
-              onPressed: openSettings,
-              child: Text(
-                dialogConfig?.buttonText ?? '',
-              ),
+    final callback = widget.permissionConfig.showDialogCallback;
+
+    if (callback == null) {
+      // ignore: avoid-ignoring-return-values, not needed.
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: Text(
+              dialogConfig?.title ?? '',
             ),
-          ],
+            content: Text(
+              dialogConfig?.text ?? '',
+            ),
+            actions: [
+              TextButton(
+                onPressed: openSettings,
+                child: Text(
+                  dialogConfig?.buttonText ?? '',
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      callback(
+        dialogConfig?.title ?? '',
+        dialogConfig?.text ?? '',
+        dialogConfig?.buttonText ?? '',
+        openSettings,
+      );
+    }
   }
 
   Future<void> _showPhoneSettings() async {
-    final navigator = Navigator.of(context);
-
     // TODO(peter): find function to open phone settings directly if possible.
     await widget._service.openAppSettings();
-
-    navigator.pop();
   }
 
   Future<void> _showLocationSettings() async {
-    final navigator = Navigator.of(context);
-
     await widget._service.openLocationSettings();
-
-    navigator.pop();
   }
 
   Future<void> _showAppSettings() async {
-    final navigator = Navigator.of(context);
-
     await widget._service.openAppSettings();
-
-    navigator.pop();
   }
 }

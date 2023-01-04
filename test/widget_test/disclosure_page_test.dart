@@ -411,4 +411,84 @@ void main() {
 
     await resumed.close();
   });
+
+  testWidgets('Required permission denied with custom dialog callback `showDialogCallback`', (tester) async {
+    final testStub = MockTestStub();
+    when(testStub.getSharedPreference())
+        .thenAnswer((realInvocation) => Future.value(prefs));
+    when(testStub.request(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.denied));
+    when(testStub.status(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.denied));
+    when(testStub.openAppSettings())
+        .thenAnswer((realInvocation) => Future.value());
+
+    final config = FlutterForcePermissionConfig(
+      title: 'Title',
+      confirmText: 'Confirm',
+      permissionItemConfigs: [
+        PermissionItemConfig(
+          permissions: [
+            Permission.location,
+          ],
+          itemText: PermissionItemText(
+            header: 'Foreground location',
+            rationaleText: 'Rationale',
+            forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+              title: 'Location required',
+              text: 'Location needed for proper operation',
+              buttonText: 'Settings',
+            ),
+          ),
+          required: true,
+        ),
+      ],
+      showDialogCallback: (title, text, button, callback) {
+        callback();
+      },
+    );
+    final status = <Permission, PermissionServiceStatus>{
+      Permission.location: PermissionServiceStatus(
+        status: PermissionStatus.denied,
+        requested: false,
+        serviceStatus: ServiceStatus.enabled,
+      ),
+    };
+    final StreamController<bool> resumed = StreamController.broadcast()
+      ..add(true);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DisclosurePage.stub(
+          permissionConfig: config,
+          permissionStatuses: status,
+          service: testStub,
+          resumed: resumed,
+        ),
+      ),
+    );
+
+    expect(find.text('Title'), findsOneWidget);
+    expect(find.text('Foreground location'), findsOneWidget);
+    expect(find.text('Rationale'), findsOneWidget);
+    expect(find.text('Confirm'), findsOneWidget);
+
+    await tester.tap(find.text('Confirm'));
+    await tester.pump();
+
+    verify(testStub.openAppSettings());
+
+    resumed.add(true);
+    await tester.pump();
+
+    when(testStub.status(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
+    resumed.add(true);
+    await tester.pump();
+
+    verify(testStub.openAppSettings());
+    expect(find.text('Settings'), findsNothing);
+
+    await resumed.close();
+  });
 }
