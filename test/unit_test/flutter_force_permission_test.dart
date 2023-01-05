@@ -4,7 +4,7 @@ import 'package:flutter_force_permission/flutter_force_permission.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
-import 'package:flutter_force_permission/src/permission_service.dart';
+import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

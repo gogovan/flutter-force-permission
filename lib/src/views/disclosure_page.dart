@@ -7,7 +7,7 @@ import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
-import 'package:flutter_force_permission/src/permission_service.dart';
+import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Disclosure page.
