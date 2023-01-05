@@ -1,7 +1,7 @@
 # flutter-force-permission
 
 ![Build](https://github.com/github/gogovan/flutter-force-permission/workflows/build.yaml/badge.svg)
-![codecov](https://codecov.io/gh/gogovan/flutter-force-permission/branch/main/graph/badge.svg?token=F9DPJUAVAJ)](https://codecov.io/gh/gogovan/flutter-force-permission)
+![codecov](https://codecov.io/gh/gogovan/flutter-force-permission/branch/main/graph/badge.svg?token=F9DPJUAVAJ)
 
 Show permission disclosure page and allows required permissions and their associated services before
 the user can proceed.
