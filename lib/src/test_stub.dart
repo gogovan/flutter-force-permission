@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// 3rd party libraries relies on static methods which are unmockable and hence untestable.
 /// This service wraps those methods so that it can be tested.
-/// https://github.com/Baseflow/flutter-permission-handler/issues/262
+/// See https://github.com/Baseflow/flutter-permission-handler/issues/262 for details.
 class TestStub {
   const TestStub();
 
