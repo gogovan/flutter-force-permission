@@ -183,7 +183,7 @@ dart_code_metrics:
     - lib/main.dart
   rules:
     # Common
-    - avoid-banned-imports # Configure some imports that you want to ban, ref: https://dartcodemetrics.dev/docs/rules/common/avoid-banned-imports
+    # - avoid-banned-imports # Configure some imports that you want to ban, ref: https://dartcodemetrics.dev/docs/rules/common/avoid-banned-imports
     - avoid-collection-methods-with-unrelated-types # Avoid using collection methods with unrelated types, such as accessing a map of integers using a string key.
     - avoid-duplicate-exports # Warns when a file has multiple exports declarations with the same URI.
     #    - avoid-dynamic # Warns when the dynamic type is used as a variable type in a declaration, return type of a function, etc. Using dynamic is considered unsafe since it can easily result in runtime errors.
@@ -203,7 +203,7 @@ dart_code_metrics:
     - avoid-unused-parameters: # Checks for unused parameters inside a function or method body. For overridden methods suggests renaming unused parameters to _, __, etc.
         exclude:
           - lib/**/*bloc.dart
-    - ban-name # Configure some names that you want to ban, ref: https://dartcodemetrics.dev/docs/rules/common/ban-name
+    # - ban-name # Configure some names that you want to ban, ref: https://dartcodemetrics.dev/docs/rules/common/ban-name
     - binary-expression-operand-order # Warns when a literal value is on the left hand side in a binary expressions, inspired by https://palantir.github.io/tslint/rules/binary-expression-operand-order/
     - double-literal-format # Checks that double literals should begin with 0. instead of just ., and should not end with a trailing 0. Helps keep a consistent style of numeric literals and decrease potential typos.
     - format-comment # Prefer format comments like sentences.

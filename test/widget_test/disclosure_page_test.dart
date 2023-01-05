@@ -7,7 +7,7 @@ import 'package:flutter_force_permission/forced_permission_dialog_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
-import 'package:flutter_force_permission/src/permission_service.dart';
+import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:flutter_force_permission/src/views/disclosure_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -23,14 +23,16 @@ void main() {
   when(prefs.getBool('Permission.location_requested')).thenReturn(false);
   when(prefs.setBool('Permission.location_requested', any))
       .thenAnswer((realInvocation) => Future.value(true));
+  when(prefs.setBool('Permission.phone_requested', any))
+      .thenAnswer((realInvocation) => Future.value(true));
 
   testWidgets('Regular permission show dialog', (tester) async {
     final testStub = MockTestStub();
     when(testStub.getSharedPreference())
         .thenAnswer((realInvocation) => Future.value(prefs));
-    when(testStub.request(Permission.location))
+    when(testStub.request(Permission.phone))
         .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
-    when(testStub.status(Permission.location))
+    when(testStub.status(Permission.phone))
         .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
 
     final config = FlutterForcePermissionConfig(
@@ -39,7 +41,7 @@ void main() {
       permissionItemConfigs: [
         PermissionItemConfig(
           permissions: [
-            Permission.location,
+            Permission.phone,
           ],
           itemText: PermissionItemText(
             header: 'Foreground location',
@@ -49,7 +51,7 @@ void main() {
       ],
     );
     final status = <Permission, PermissionServiceStatus>{
-      Permission.location: PermissionServiceStatus(
+      Permission.phone: PermissionServiceStatus(
         status: PermissionStatus.denied,
         requested: false,
         serviceStatus: ServiceStatus.enabled,
@@ -76,7 +78,8 @@ void main() {
     await tester.tap(find.text('Confirm'));
     await tester.pump();
 
-    verify(prefs.setBool('Permission.location_requested', true));
+    verify(testStub.request(Permission.phone));
+    verify(prefs.setBool('Permission.phone_requested', true));
 
     await resumed.close();
   });
@@ -139,6 +142,7 @@ void main() {
     await tester.tap(find.text('Confirm'));
     await tester.pump();
 
+    verify(testStub.request(Permission.location));
     verify(prefs.setBool('Permission.location_requested', true));
 
     await resumed.close();
@@ -204,6 +208,8 @@ void main() {
 
     await tester.tap(find.text('Confirm'));
     await tester.pump();
+
+    verify(testStub.request(Permission.location));
 
     expect(find.text('Location required'), findsOneWidget);
     expect(find.text('Location needed for proper operation'), findsOneWidget);
@@ -481,11 +487,7 @@ void main() {
       await tester.tap(find.text('Confirm'));
       await tester.pump();
 
-      verify(testStub.openAppSettings());
-
-      resumed.add(true);
-      await tester.pump();
-
+      verify(testStub.request(Permission.location));
       when(testStub.status(Permission.location)).thenAnswer(
         (realInvocation) => Future.value(PermissionStatus.granted),
       );
