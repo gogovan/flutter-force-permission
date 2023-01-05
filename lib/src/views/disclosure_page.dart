@@ -316,7 +316,6 @@ class _DisclosurePageState extends State<DisclosurePage>
   }
 
   Future<void> _showPhoneSettings() async {
-    // TODO(peter): find function to open phone settings directly if possible.
     await widget._service.openAppSettings();
   }
 
