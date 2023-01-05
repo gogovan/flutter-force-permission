@@ -21,10 +21,8 @@ class PermissionItemConfig {
   /// The display item configuration for these permission(s). Refer to [PermissionItemText] for details.
   final PermissionItemText itemText;
 
-  /// If the permission has an associated service (e.g. location) and this permission is required,
-  /// this service will also be checked for availability.
-  /// If service is unavailable and this item is not null, the disclosure page will
-  /// show a disclosure item for this service, before `itemText`.
+  /// If the permission has an associated service (e.g. location) and this permission is required, this service will also be checked for availability.
+  /// If service is unavailable and this item is not null, the disclosure page will show a disclosure item for this service, before `itemText`.
   /// Users will also be asked to enable the service.
   ///
   /// *Note*: This is used only when `required` is true.
