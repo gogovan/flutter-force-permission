@@ -1,6 +1,6 @@
 # flutter-force-permission
 
-![Build](https://github.com/github/gogovan/flutter-force-permission/workflows/build.yaml/badge.svg)
+![Build](https://github.com/gogovan/flutter-force-permission/actions/workflows/build.yaml/badge.svg)
 ![codecov](https://codecov.io/gh/gogovan/flutter-force-permission/branch/main/graph/badge.svg?token=F9DPJUAVAJ)
 
 Show permission disclosure page and allows required permissions and their associated services before
@@ -170,6 +170,13 @@ final config = FlutterForcePermissionConfig(
   },
 );
 ```
+
+## Known Issues
+
+- Currently it depends on our fork
+  of [`flutter-permission-handler`](https://github.com/gogovan/flutter-permission-handler) instead
+  of the original to fix an issue for iOS. You may track the
+  issue and pull request [here](https://github.com/Baseflow/flutter-permission-handler/pull/967).
 
 ## Issues
 
