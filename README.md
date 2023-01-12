@@ -171,13 +171,6 @@ final config = FlutterForcePermissionConfig(
 );
 ```
 
-## Known Issues
-
-- Currently it depends on our fork
-  of [`flutter-permission-handler`](https://github.com/gogovan/flutter-permission-handler) instead
-  of the original to fix an issue for iOS. You may track the
-  issue and pull request [here](https://github.com/Baseflow/flutter-permission-handler/pull/967).
-
 ## Issues
 
 ## Contributing
