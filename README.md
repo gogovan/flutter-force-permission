@@ -21,7 +21,27 @@ customizable dialog and redirect user to the appropriate settings page provided 
 ```yaml
 dependencies:
   flutter_force_permission: ^0.1.0
-  permission_handler: ^10.2.0
+  # Currently this package depends on our `flutter-permission-handler` package to fix an iOS issue.
+  # Directly depends on our packages to avoid any pubspec dependency resolving failure.
+  # TODO replace once we upload our packages and our PR merged by Baseflow.
+  permission_handler:
+     git:
+        url: https://github.com/gogovan/flutter-permission-handler.git
+        ref: master
+        path: permission_handler
+  permission_handler_apple:
+     git:
+        url: https://github.com/gogovan/flutter-permission-handler.git
+        ref: master
+        path: permission_handler_apple
+
+# TODO replace once we upload our packages and our PR merged by Baseflow.
+dependency_overrides:
+   permission_handler_apple:
+      git:
+         url: https://github.com/gogovan/flutter-permission-handler.git
+         ref: master
+         path: permission_handler_apple
 ```
 
 2. This package depends on [permission_handler](https://pub.dev/packages/permission_handler).
