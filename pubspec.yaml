@@ -18,6 +18,11 @@ dependencies:
       url: https://github.com/gogovan/flutter-permission-handler.git
       ref: master
       path: permission_handler
+  permission_handler_apple:
+    git:
+      url: https://github.com/gogovan/flutter-permission-handler.git
+      ref: master
+      path: permission_handler_apple
   app_settings: ^4.1.8
   shared_preferences: ^2.0.15
 
