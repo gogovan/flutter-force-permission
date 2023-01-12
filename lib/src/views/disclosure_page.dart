@@ -240,6 +240,13 @@ class _DisclosurePageState extends State<DisclosurePage>
           // ignore: prefer-moving-to-variable, multiple calls needed to ensure up-to-date data.
           var permStatus = await widget._service.status(perm);
           if (permStatus != PermissionStatus.permanentlyDenied) {
+            if (perm == Permission.appTrackingTransparency) {
+              // When multiple permissions are requested successively, the App Tracking dialog cannot be shown
+              // because it can be shown only when the app is active.
+              // Giving the app some time to become active can fix the issue.
+              // ignore: avoid-ignoring-return-values, not needed.
+              await Future.delayed(const Duration(milliseconds: 600));
+            }
             // ignore: avoid-ignoring-return-values, not needed.
             await widget._service.request(perm);
           }
