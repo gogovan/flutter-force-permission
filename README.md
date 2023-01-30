@@ -118,7 +118,7 @@ final result = await perm.show(Navigator.of(context));
 ### Styling
 
 You can set the styles by providing a [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
-when calling `show` to show the permission request page.
+in the configuration.
 
 - `elevatedButtonTheme.style` is used for the primary button.
 - `primaryColor` is used for as the color of the icons.
