@@ -18,6 +18,7 @@ class FlutterForcePermissionConfig {
     required this.confirmText,
     required this.permissionItemConfigs,
     this.showDialogCallback,
+    this.themeData,
   });
 
   /// The title for the disclosure page.
@@ -45,4 +46,8 @@ class FlutterForcePermissionConfig {
   /// e.g. (`() async => false`) to `willPopCallback` for your dialog.
   /// Also, you will probably need to dismiss your dialog after confirmation.
   final ShowDialogCallback? showDialogCallback;
+
+  /// Optional theme data for the disclosure page.
+  /// If none is provided, theme data from the default Context is used.
+  final ThemeData? themeData;
 }

@@ -1,6 +1,6 @@
 name: flutter_force_permission
 description: Show permission disclosure page and allows required permissions before user can proceed.
-version: 0.1.0
+version: 0.2.0
 homepage: https://gogovan.hk
 
 publish_to: none

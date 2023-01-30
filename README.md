@@ -112,20 +112,19 @@ final perm = FlutterForcePermission(
    granted/denied/etc), service status and whether they are requested by this plugin.
 
 ```dart
-
-final result = await
-perm.show(Navigator.of(context));
+final result = await perm.show(Navigator.of(context));
 ```
 
 ### Styling
 
-You can set the style of the text shown by setting up
-a [TextTheme](https://api.flutter.dev/flutter/material/TextTheme-class.html) of the provided
-context.
+You can set the styles by providing a [ThemeData](https://api.flutter.dev/flutter/material/ThemeData-class.html)
+in the configuration.
 
-- Title uses `headline6` text style.
-- Item header use `subtitle1` text style.
-- Item body use `bodyText2` text style.
+- `elevatedButtonTheme.style` is used for the primary button.
+- `primaryColor` is used for as the color of the icons.
+- Title uses `titleLarge` text style.
+- Item header use `titleMedium` text style.
+- Item body use `bodyMedium` text style.
 
 ## Advanced Usage
 

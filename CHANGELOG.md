@@ -1,3 +1,9 @@
-## 0.0.1
+## 0.2.0
 
-* TODO: Describe initial release.
+- Add styling support for permission request page.
+- Center the title.
+
+## 0.1.0
+
+- Initial release.
+
