@@ -114,12 +114,14 @@ class _DisclosurePageState extends State<DisclosurePage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = widget.permissionConfig.themeData ?? Theme.of(context);
+
     final titleWidget = Column(
       children: [
         const SizedBox(height: 64),
         Text(
           widget.permissionConfig.title,
-          style: Theme.of(context).textTheme.headline6,
+          style: theme.textTheme.headline6,
         ),
         const SizedBox(height: 16),
       ],
@@ -146,7 +148,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                   var icon = config?.icon;
                   icon ??= Icon(
                     Icons.perm_device_info_sharp,
-                    color: Theme.of(context).primaryColor,
+                    color: theme.primaryColor,
                   );
 
                   return Center(
@@ -162,7 +164,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                               Flexible(
                                 child: Text(
                                   config?.header ?? '',
-                                  style: Theme.of(context).textTheme.subtitle1,
+                                  style: theme.textTheme.subtitle1,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: DisclosurePage.maxLines,
@@ -171,7 +173,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                               Flexible(
                                 child: Text(
                                   config?.rationaleText ?? '',
-                                  style: Theme.of(context).textTheme.bodyText2,
+                                  style: theme.textTheme.bodyText2,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: DisclosurePage.maxLines,
@@ -192,6 +194,7 @@ class _DisclosurePageState extends State<DisclosurePage>
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => _onGrantPermission(context),
+              style: theme.elevatedButtonTheme.style,
               child: Text(widget.permissionConfig.confirmText),
             ),
           ),
