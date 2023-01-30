@@ -122,6 +122,7 @@ class _DisclosurePageState extends State<DisclosurePage>
         Text(
           widget.permissionConfig.title,
           style: theme.textTheme.headline6,
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
       ],
