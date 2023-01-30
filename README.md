@@ -122,9 +122,9 @@ in the configuration.
 
 - `elevatedButtonTheme.style` is used for the primary button.
 - `primaryColor` is used for as the color of the icons.
-- Title uses `headline6` text style.
-- Item header use `subtitle1` text style.
-- Item body use `bodyText2` text style.
+- Title uses `titleLarge` text style.
+- Item header use `titleMedium` text style.
+- Item body use `bodyMedium` text style.
 
 ## Advanced Usage
 

@@ -121,7 +121,7 @@ class _DisclosurePageState extends State<DisclosurePage>
         const SizedBox(height: 64),
         Text(
           widget.permissionConfig.title,
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
@@ -165,7 +165,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                               Flexible(
                                 child: Text(
                                   config?.header ?? '',
-                                  style: theme.textTheme.subtitle1,
+                                  style: theme.textTheme.titleMedium,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: DisclosurePage.maxLines,
@@ -174,7 +174,7 @@ class _DisclosurePageState extends State<DisclosurePage>
                               Flexible(
                                 child: Text(
                                   config?.rationaleText ?? '',
-                                  style: theme.textTheme.bodyText2,
+                                  style: theme.textTheme.bodyMedium,
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: DisclosurePage.maxLines,
