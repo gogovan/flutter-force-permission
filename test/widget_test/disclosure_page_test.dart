@@ -6,6 +6,7 @@ import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/forced_permission_dialog_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
+import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:flutter_force_permission/src/views/disclosure_page.dart';
@@ -110,7 +111,7 @@ void main() {
               buttonText: 'Settings',
             ),
           ),
-          required: true,
+          required: PermissionRequiredOption.required,
         ),
       ],
     );
@@ -176,7 +177,7 @@ void main() {
               buttonText: 'Settings',
             ),
           ),
-          required: true,
+          required: PermissionRequiredOption.required,
         ),
       ],
     );
@@ -264,7 +265,7 @@ void main() {
               buttonText: 'Settings',
             ),
           ),
-          required: true,
+          required: PermissionRequiredOption.required,
         ),
       ],
     );
@@ -359,7 +360,7 @@ void main() {
               buttonText: 'GPS Settings',
             ),
           ),
-          required: true,
+          required: PermissionRequiredOption.required,
         ),
       ],
     );
@@ -451,10 +452,10 @@ void main() {
                 buttonText: 'Settings',
               ),
             ),
-            required: true,
+            required: PermissionRequiredOption.required,
           ),
         ],
-        showDialogCallback: (context, title, text, button, callback) {
+        showDialogCallback: (context, dialog, callback) {
           callback();
         },
       );

@@ -4,6 +4,7 @@ import 'package:flutter_force_permission/flutter_force_permission.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
+import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -36,7 +37,7 @@ void main() {
   });
 
   test('Do show disclosure page for required perms if asked', () async {
-    await _test(prefRequested: true, permissionRequired: true);
+    await _test(prefRequested: true, permissionRequired: PermissionRequiredOption.required);
   });
 }
 
@@ -44,7 +45,7 @@ Future<void> _test({
   prefRequested = false,
   permissionStatus = PermissionStatus.denied,
   serviceStatus = ServiceStatus.enabled,
-  permissionRequired = false,
+  permissionRequired = PermissionRequiredOption.none,
   expectNavigatorPushed = true,
 }) async {
   final navigator = MockNavigatorState();

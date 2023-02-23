@@ -2,6 +2,7 @@ library flutter_force_permission;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
+import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
@@ -49,14 +50,14 @@ class FlutterForcePermission {
     for (final permConfig in config.permissionItemConfigs) {
       for (final perm in permConfig.permissions) {
         if (permissionStatuses[perm]?.status != PermissionStatus.granted &&
-            (permConfig.required ||
+            (permConfig.required != PermissionRequiredOption.none ||
                 !(permissionStatuses[perm]?.requested ?? true))) {
           needShow = true;
           break;
         }
         if (perm is PermissionWithService &&
             permissionStatuses[perm]?.serviceStatus == ServiceStatus.disabled &&
-            permConfig.required) {
+            permConfig.required != PermissionRequiredOption.none) {
           needShow = true;
           break;
         }
