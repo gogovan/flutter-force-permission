@@ -37,6 +37,10 @@ void main() {
   });
 
   test('Do show disclosure page for required perms if asked', () async {
+    await _test(prefRequested: true, permissionRequired: PermissionRequiredOption.ask);
+  });
+
+  test('Do show disclosure page for required perms if required', () async {
     await _test(prefRequested: true, permissionRequired: PermissionRequiredOption.required);
   });
 }
