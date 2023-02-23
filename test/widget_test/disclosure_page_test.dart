@@ -260,7 +260,10 @@ void main() {
       ),
       verification: (resumed) async {
         expect(find.text('Location required'), findsOneWidget);
-        expect(find.text('Location needed for proper operation'), findsOneWidget);
+        expect(
+          find.text('Location needed for proper operation'),
+          findsOneWidget,
+        );
         expect(find.text('Settings'), findsOneWidget);
 
         await tester.tap(find.text('Settings'));
@@ -274,8 +277,9 @@ void main() {
         expect(find.text('Settings'), findsOneWidget);
         await tester.tap(find.text('Settings'));
 
-        when(testStub.status(Permission.location))
-            .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
+        when(testStub.status(Permission.location)).thenAnswer(
+          (realInvocation) => Future.value(PermissionStatus.granted),
+        );
         resumed.add(true);
         await tester.pump();
 
@@ -426,7 +430,7 @@ void main() {
         verification: (resumed) async {
           verify(testStub.request(Permission.location));
           when(testStub.status(Permission.location)).thenAnswer(
-                (realInvocation) => Future.value(PermissionStatus.granted),
+            (realInvocation) => Future.value(PermissionStatus.granted),
           );
           resumed.add(true);
           await tester.pump();

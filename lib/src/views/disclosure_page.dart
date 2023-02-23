@@ -313,9 +313,7 @@ class _DisclosurePageState extends State<DisclosurePage>
       if (option == PermissionRequiredOption.ask) {
         actions.add(
           TextButton(
-            onPressed: () {
-              navigator.pop();
-            },
+            onPressed: navigator.pop,
             child:
                 Text(dialogConfig?.cancelText ?? '', textAlign: TextAlign.end),
           ),
