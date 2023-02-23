@@ -81,7 +81,7 @@ final perm = FlutterForcePermission(
     permissionItemConfigs: [
       PermissionItemConfig(
         permissions: [Permission.locationWhenInUse],
-        required: true,
+        required: PermissionRequiredOption.required,
         itemText: PermissionItemText(
           header: 'Foreground Location',
           rationaleText: 'Rationale for Foreground location. Required.',
@@ -159,7 +159,7 @@ final config = FlutterForcePermissionConfig(
           buttonText: 'Settings',
         ),
       ),
-      required: true,
+      required: PermissionRequiredOption.required,
     ),
   ],
   showDialogCallback: (context, title, text, button, callback) {
