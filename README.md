@@ -81,7 +81,7 @@ final perm = FlutterForcePermission(
     permissionItemConfigs: [
       PermissionItemConfig(
         permissions: [Permission.locationWhenInUse],
-        required: true,
+        required: PermissionRequiredOption.required,
         itemText: PermissionItemText(
           header: 'Foreground Location',
           rationaleText: 'Rationale for Foreground location. Required.',
@@ -159,10 +159,10 @@ final config = FlutterForcePermissionConfig(
           buttonText: 'Settings',
         ),
       ),
-      required: true,
+      required: PermissionRequiredOption.required,
     ),
   ],
-  showDialogCallback: (context, title, text, button, callback) {
+  showDialogCallback: (context, option, permConfig, callback) {
     // Store the navigator to avoid storing contexts across async gaps. See https://stackoverflow.com/a/69512692/11675817 for details.
     final navigator = Navigator.of(context);
     // Show your dialog.
@@ -172,15 +172,15 @@ final config = FlutterForcePermissionConfig(
           WillPopScope(
             onWillPop: () async => false,
             child: AlertDialog(
-              title: Text(title),
-              content: Text(text),
+              title: Text(permConfig.forcedPermissionDialogConfig.title),
+              content: Text(permConfig.forcedPermissionDialogConfig.text),
               actions: [
                 TextButton(
                   onPressed: () {
                     callback();
                     navigator.pop();
                   },
-                  child: Text(button),
+                  child: Text(permConfig.forcedPermissionDialogConfig.buttonText),
                 ),
               ],
             ),

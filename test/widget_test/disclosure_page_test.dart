@@ -6,6 +6,7 @@ import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/forced_permission_dialog_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
+import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:flutter_force_permission/src/views/disclosure_page.dart';
@@ -35,53 +36,29 @@ void main() {
     when(testStub.status(Permission.phone))
         .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
 
-    final config = FlutterForcePermissionConfig(
-      title: 'Title',
-      confirmText: 'Confirm',
-      permissionItemConfigs: [
-        PermissionItemConfig(
-          permissions: [
-            Permission.phone,
-          ],
-          itemText: PermissionItemText(
-            header: 'Foreground location',
-            rationaleText: 'Rationale',
+    await _test(
+      tester,
+      testStub,
+      config: FlutterForcePermissionConfig(
+        title: 'Title',
+        confirmText: 'Confirm',
+        permissionItemConfigs: [
+          PermissionItemConfig(
+            permissions: [
+              Permission.phone,
+            ],
+            itemText: PermissionItemText(
+              header: 'Foreground location',
+              rationaleText: 'Rationale',
+            ),
           ),
-        ),
-      ],
-    );
-    final status = <Permission, PermissionServiceStatus>{
-      Permission.phone: PermissionServiceStatus(
-        status: PermissionStatus.denied,
-        requested: false,
-        serviceStatus: ServiceStatus.enabled,
+        ],
       ),
-    };
-    final StreamController<bool> resumed = StreamController.broadcast();
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: DisclosurePage.stub(
-          permissionConfig: config,
-          permissionStatuses: status,
-          service: testStub,
-          resumed: resumed,
-        ),
-      ),
+      verification: (resumed) {
+        verify(testStub.request(Permission.phone));
+        verify(prefs.setBool('Permission.phone_requested', true));
+      },
     );
-
-    expect(find.text('Title'), findsOneWidget);
-    expect(find.text('Foreground location'), findsOneWidget);
-    expect(find.text('Rationale'), findsOneWidget);
-    expect(find.text('Confirm'), findsOneWidget);
-
-    await tester.tap(find.text('Confirm'));
-    await tester.pump();
-
-    verify(testStub.request(Permission.phone));
-    verify(prefs.setBool('Permission.phone_requested', true));
-
-    await resumed.close();
   });
 
   testWidgets('Required permission granted', (tester) async {
@@ -93,59 +70,90 @@ void main() {
     when(testStub.status(Permission.location))
         .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
 
-    final config = FlutterForcePermissionConfig(
-      title: 'Title',
-      confirmText: 'Confirm',
-      permissionItemConfigs: [
-        PermissionItemConfig(
-          permissions: [
-            Permission.location,
-          ],
-          itemText: PermissionItemText(
-            header: 'Foreground location',
-            rationaleText: 'Rationale',
-            forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
-              title: 'Location required',
-              text: 'Location needed for proper operation',
-              buttonText: 'Settings',
+    await _test(
+      tester,
+      testStub,
+      config: FlutterForcePermissionConfig(
+        title: 'Title',
+        confirmText: 'Confirm',
+        permissionItemConfigs: [
+          PermissionItemConfig(
+            permissions: [
+              Permission.location,
+            ],
+            itemText: PermissionItemText(
+              header: 'Foreground location',
+              rationaleText: 'Rationale',
+              forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                title: 'Location required',
+                text: 'Location needed for proper operation',
+                buttonText: 'Settings',
+              ),
             ),
+            required: PermissionRequiredOption.required,
           ),
-          required: true,
-        ),
-      ],
-    );
-    final status = <Permission, PermissionServiceStatus>{
-      Permission.location: PermissionServiceStatus(
-        status: PermissionStatus.denied,
-        requested: false,
-        serviceStatus: ServiceStatus.enabled,
+        ],
       ),
-    };
-    final StreamController<bool> resumed = StreamController.broadcast();
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: DisclosurePage.stub(
-          permissionConfig: config,
-          permissionStatuses: status,
-          service: testStub,
-          resumed: resumed,
-        ),
-      ),
+      verification: (resumed) {
+        verify(testStub.request(Permission.location));
+        verify(prefs.setBool('Permission.location_requested', true));
+      },
     );
+  });
 
-    expect(find.text('Title'), findsOneWidget);
-    expect(find.text('Foreground location'), findsOneWidget);
-    expect(find.text('Rationale'), findsOneWidget);
-    expect(find.text('Confirm'), findsOneWidget);
+  testWidgets('Ask permission', (tester) async {
+    final testStub = MockTestStub();
+    when(testStub.getSharedPreference())
+        .thenAnswer((realInvocation) => Future.value(prefs));
+    when(testStub.request(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.denied));
+    when(testStub.status(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.denied));
+    when(testStub.openAppSettings())
+        .thenAnswer((realInvocation) => Future.value());
 
-    await tester.tap(find.text('Confirm'));
-    await tester.pump();
+    await _test(
+      tester,
+      testStub,
+      config: FlutterForcePermissionConfig(
+        title: 'Title',
+        confirmText: 'Confirm',
+        permissionItemConfigs: [
+          PermissionItemConfig(
+            permissions: [
+              Permission.location,
+            ],
+            itemText: PermissionItemText(
+              header: 'Foreground location',
+              rationaleText: 'Rationale',
+              forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                title: 'Location required',
+                text: 'Location needed for proper operation',
+                cancelText: 'Cancel',
+                buttonText: 'Settings',
+              ),
+            ),
+            required: PermissionRequiredOption.ask,
+          ),
+        ],
+      ),
+      verification: (resumed) async {
+        verify(testStub.request(Permission.location));
 
-    verify(testStub.request(Permission.location));
-    verify(prefs.setBool('Permission.location_requested', true));
+        expect(find.text('Location required'), findsOneWidget);
+        expect(
+          find.text('Location needed for proper operation'),
+          findsOneWidget,
+        );
+        expect(find.text('Cancel'), findsOneWidget);
+        await tester.tap(find.text('Cancel'));
 
-    await resumed.close();
+        resumed.add(true);
+        await tester.pump();
+
+        expect(find.text('Settings'), findsNothing);
+      },
+    );
   });
 
   testWidgets('Required permission denied', (tester) async {
@@ -159,81 +167,60 @@ void main() {
     when(testStub.openAppSettings())
         .thenAnswer((realInvocation) => Future.value());
 
-    final config = FlutterForcePermissionConfig(
-      title: 'Title',
-      confirmText: 'Confirm',
-      permissionItemConfigs: [
-        PermissionItemConfig(
-          permissions: [
-            Permission.location,
-          ],
-          itemText: PermissionItemText(
-            header: 'Foreground location',
-            rationaleText: 'Rationale',
-            forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
-              title: 'Location required',
-              text: 'Location needed for proper operation',
-              buttonText: 'Settings',
+    await _test(
+      tester,
+      testStub,
+      config: FlutterForcePermissionConfig(
+        title: 'Title',
+        confirmText: 'Confirm',
+        permissionItemConfigs: [
+          PermissionItemConfig(
+            permissions: [
+              Permission.location,
+            ],
+            itemText: PermissionItemText(
+              header: 'Foreground location',
+              rationaleText: 'Rationale',
+              forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                title: 'Location required',
+                text: 'Location needed for proper operation',
+                buttonText: 'Settings',
+              ),
             ),
+            required: PermissionRequiredOption.required,
           ),
-          required: true,
-        ),
-      ],
-    );
-    final status = <Permission, PermissionServiceStatus>{
-      Permission.location: PermissionServiceStatus(
-        status: PermissionStatus.denied,
-        requested: false,
-        serviceStatus: ServiceStatus.enabled,
+        ],
       ),
-    };
-    final StreamController<bool> resumed = StreamController.broadcast()
-      ..add(true);
+      verification: (resumed) async {
+        verify(testStub.request(Permission.location));
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: DisclosurePage.stub(
-          permissionConfig: config,
-          permissionStatuses: status,
-          service: testStub,
-          resumed: resumed,
-        ),
-      ),
+        expect(find.text('Location required'), findsOneWidget);
+        expect(
+          find.text('Location needed for proper operation'),
+          findsOneWidget,
+        );
+        expect(find.text('Settings'), findsOneWidget);
+
+        await tester.tap(find.text('Settings'));
+        await tester.pump();
+
+        verify(testStub.openAppSettings());
+
+        resumed.add(true);
+        await tester.pump();
+
+        expect(find.text('Settings'), findsOneWidget);
+        await tester.tap(find.text('Settings'));
+
+        when(testStub.status(Permission.location)).thenAnswer(
+          (realInvocation) => Future.value(PermissionStatus.granted),
+        );
+        resumed.add(true);
+        await tester.pump();
+
+        expect(find.text('Settings'), findsNothing);
+      },
     );
-
-    expect(find.text('Title'), findsOneWidget);
-    expect(find.text('Foreground location'), findsOneWidget);
-    expect(find.text('Rationale'), findsOneWidget);
-    expect(find.text('Confirm'), findsOneWidget);
-
-    await tester.tap(find.text('Confirm'));
-    await tester.pump();
-
-    verify(testStub.request(Permission.location));
-
-    expect(find.text('Location required'), findsOneWidget);
-    expect(find.text('Location needed for proper operation'), findsOneWidget);
-    expect(find.text('Settings'), findsOneWidget);
-
-    await tester.tap(find.text('Settings'));
-    await tester.pump();
-
-    verify(testStub.openAppSettings());
-
-    resumed.add(true);
-    await tester.pump();
-
-    expect(find.text('Settings'), findsOneWidget);
-    await tester.tap(find.text('Settings'));
-
-    when(testStub.status(Permission.location))
-        .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
-    resumed.add(true);
-    await tester.pump();
-
-    expect(find.text('Settings'), findsNothing);
-
-    await resumed.close();
   });
 
   // If permissions are permanently denied, permission request will not show.
@@ -247,79 +234,58 @@ void main() {
     when(testStub.openAppSettings())
         .thenAnswer((realInvocation) => Future.value());
 
-    final config = FlutterForcePermissionConfig(
-      title: 'Title',
-      confirmText: 'Confirm',
-      permissionItemConfigs: [
-        PermissionItemConfig(
-          permissions: [
-            Permission.location,
-          ],
-          itemText: PermissionItemText(
-            header: 'Foreground location',
-            rationaleText: 'Rationale',
-            forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
-              title: 'Location required',
-              text: 'Location needed for proper operation',
-              buttonText: 'Settings',
+    await _test(
+      tester,
+      testStub,
+      config: FlutterForcePermissionConfig(
+        title: 'Title',
+        confirmText: 'Confirm',
+        permissionItemConfigs: [
+          PermissionItemConfig(
+            permissions: [
+              Permission.location,
+            ],
+            itemText: PermissionItemText(
+              header: 'Foreground location',
+              rationaleText: 'Rationale',
+              forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                title: 'Location required',
+                text: 'Location needed for proper operation',
+                buttonText: 'Settings',
+              ),
             ),
+            required: PermissionRequiredOption.required,
           ),
-          required: true,
-        ),
-      ],
-    );
-    final status = <Permission, PermissionServiceStatus>{
-      Permission.location: PermissionServiceStatus(
-        status: PermissionStatus.denied,
-        requested: false,
-        serviceStatus: ServiceStatus.enabled,
+        ],
       ),
-    };
-    final StreamController<bool> resumed = StreamController.broadcast()
-      ..add(true);
+      verification: (resumed) async {
+        expect(find.text('Location required'), findsOneWidget);
+        expect(
+          find.text('Location needed for proper operation'),
+          findsOneWidget,
+        );
+        expect(find.text('Settings'), findsOneWidget);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: DisclosurePage.stub(
-          permissionConfig: config,
-          permissionStatuses: status,
-          service: testStub,
-          resumed: resumed,
-        ),
-      ),
+        await tester.tap(find.text('Settings'));
+        await tester.pump();
+
+        verify(testStub.openAppSettings());
+
+        resumed.add(true);
+        await tester.pump();
+
+        expect(find.text('Settings'), findsOneWidget);
+        await tester.tap(find.text('Settings'));
+
+        when(testStub.status(Permission.location)).thenAnswer(
+          (realInvocation) => Future.value(PermissionStatus.granted),
+        );
+        resumed.add(true);
+        await tester.pump();
+
+        expect(find.text('Settings'), findsNothing);
+      },
     );
-
-    expect(find.text('Title'), findsOneWidget);
-    expect(find.text('Foreground location'), findsOneWidget);
-    expect(find.text('Rationale'), findsOneWidget);
-    expect(find.text('Confirm'), findsOneWidget);
-
-    await tester.tap(find.text('Confirm'));
-    await tester.pump();
-
-    expect(find.text('Location required'), findsOneWidget);
-    expect(find.text('Location needed for proper operation'), findsOneWidget);
-    expect(find.text('Settings'), findsOneWidget);
-
-    await tester.tap(find.text('Settings'));
-    await tester.pump();
-
-    verify(testStub.openAppSettings());
-
-    resumed.add(true);
-    await tester.pump();
-
-    expect(find.text('Settings'), findsOneWidget);
-    await tester.tap(find.text('Settings'));
-
-    when(testStub.status(Permission.location))
-        .thenAnswer((realInvocation) => Future.value(PermissionStatus.granted));
-    resumed.add(true);
-    await tester.pump();
-
-    expect(find.text('Settings'), findsNothing);
-
-    await resumed.close();
   });
 
   testWidgets('Required service permission', (tester) async {
@@ -359,7 +325,7 @@ void main() {
               buttonText: 'GPS Settings',
             ),
           ),
-          required: true,
+          required: PermissionRequiredOption.required,
         ),
       ],
     );
@@ -434,70 +400,87 @@ void main() {
       when(testStub.openAppSettings())
           .thenAnswer((realInvocation) => Future.value());
 
-      final config = FlutterForcePermissionConfig(
-        title: 'Title',
-        confirmText: 'Confirm',
-        permissionItemConfigs: [
-          PermissionItemConfig(
-            permissions: [
-              Permission.location,
-            ],
-            itemText: PermissionItemText(
-              header: 'Foreground location',
-              rationaleText: 'Rationale',
-              forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
-                title: 'Location required',
-                text: 'Location needed for proper operation',
-                buttonText: 'Settings',
+      await _test(
+        tester,
+        testStub,
+        config: FlutterForcePermissionConfig(
+          title: 'Title',
+          confirmText: 'Confirm',
+          permissionItemConfigs: [
+            PermissionItemConfig(
+              permissions: [
+                Permission.location,
+              ],
+              itemText: PermissionItemText(
+                header: 'Foreground location',
+                rationaleText: 'Rationale',
+                forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                  title: 'Location required',
+                  text: 'Location needed for proper operation',
+                  buttonText: 'Settings',
+                ),
               ),
+              required: PermissionRequiredOption.required,
             ),
-            required: true,
-          ),
-        ],
-        showDialogCallback: (context, title, text, button, callback) {
-          callback();
+          ],
+          showDialogCallback: (context, option, config, callback) {
+            callback();
+          },
+        ),
+        verification: (resumed) async {
+          verify(testStub.request(Permission.location));
+          when(testStub.status(Permission.location)).thenAnswer(
+            (realInvocation) => Future.value(PermissionStatus.granted),
+          );
+          resumed.add(true);
+          await tester.pump();
+
+          verify(testStub.openAppSettings());
+          expect(find.text('Settings'), findsNothing);
+
+          await resumed.close();
         },
       );
-      final status = <Permission, PermissionServiceStatus>{
-        Permission.location: PermissionServiceStatus(
-          status: PermissionStatus.denied,
-          requested: false,
-          serviceStatus: ServiceStatus.enabled,
-        ),
-      };
-      final StreamController<bool> resumed = StreamController.broadcast()
-        ..add(true);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: DisclosurePage.stub(
-            permissionConfig: config,
-            permissionStatuses: status,
-            service: testStub,
-            resumed: resumed,
-          ),
-        ),
-      );
-
-      expect(find.text('Title'), findsOneWidget);
-      expect(find.text('Foreground location'), findsOneWidget);
-      expect(find.text('Rationale'), findsOneWidget);
-      expect(find.text('Confirm'), findsOneWidget);
-
-      await tester.tap(find.text('Confirm'));
-      await tester.pump();
-
-      verify(testStub.request(Permission.location));
-      when(testStub.status(Permission.location)).thenAnswer(
-        (realInvocation) => Future.value(PermissionStatus.granted),
-      );
-      resumed.add(true);
-      await tester.pump();
-
-      verify(testStub.openAppSettings());
-      expect(find.text('Settings'), findsNothing);
-
-      await resumed.close();
     },
   );
+}
+
+Future<void> _test(
+  WidgetTester tester,
+  TestStub testStub, {
+  required FlutterForcePermissionConfig config,
+  required Function(StreamController<bool> resumed) verification,
+}) async {
+  final status = <Permission, PermissionServiceStatus>{
+    Permission.phone: PermissionServiceStatus(
+      status: PermissionStatus.denied,
+      requested: false,
+      serviceStatus: ServiceStatus.enabled,
+    ),
+  };
+  final StreamController<bool> resumed = StreamController.broadcast()
+    ..add(true);
+
+  await tester.pumpWidget(
+    MaterialApp(
+      home: DisclosurePage.stub(
+        permissionConfig: config,
+        permissionStatuses: status,
+        service: testStub,
+        resumed: resumed,
+      ),
+    ),
+  );
+
+  expect(find.text('Title'), findsOneWidget);
+  expect(find.text('Foreground location'), findsOneWidget);
+  expect(find.text('Rationale'), findsOneWidget);
+  expect(find.text('Confirm'), findsOneWidget);
+
+  await tester.tap(find.text('Confirm'));
+  await tester.pump();
+
+  await verification(resumed);
+
+  await resumed.close();
 }

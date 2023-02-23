@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
+import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
@@ -102,10 +103,13 @@ class _DisclosurePageState extends State<DisclosurePage>
         final serviceText = e.serviceItemText;
 
         final List<_DisplayItem> result = [];
-        if (serviceDisabled && serviceText != null && e.required) {
+        if (serviceDisabled &&
+            serviceText != null &&
+            e.required != PermissionRequiredOption.none) {
           result.add(_DisplayItem(config: e, isService: true));
         }
-        if (denied && (!requested || e.required)) {
+        if (denied &&
+            (!requested || e.required != PermissionRequiredOption.none)) {
           result.add(_DisplayItem(config: e, isService: false));
         }
 
@@ -216,25 +220,41 @@ class _DisclosurePageState extends State<DisclosurePage>
         if (text != null) {
           for (final Permission perm in item.config.permissions) {
             if (perm is PermissionWithService) {
-              var serviceStatus = await widget._service.serviceStatus(perm);
-              while (serviceStatus == ServiceStatus.disabled) {
-                if (perm == Permission.phone) {
-                  await _showRequiredPermDialog(text, _showPhoneSettings);
-                } else if (perm == Permission.location ||
-                    perm == Permission.locationAlways ||
-                    perm == Permission.locationWhenInUse) {
-                  await _showRequiredPermDialog(text, _showLocationSettings);
-                } else {
-                  if (kDebugMode) {
-                    print(
-                      '[flutter-force-permission] WARN: Unsupported Permission with service $perm found.',
+              if (item.config.required != PermissionRequiredOption.none) {
+                var serviceStatus = await widget._service.serviceStatus(perm);
+                while (serviceStatus == ServiceStatus.disabled) {
+                  if (perm == Permission.phone) {
+                    await _showRequiredPermDialog(
+                      item.config.required,
+                      text,
+                      _showPhoneSettings,
                     );
+                  } else if (perm == Permission.location ||
+                      perm == Permission.locationAlways ||
+                      perm == Permission.locationWhenInUse) {
+                    await _showRequiredPermDialog(
+                      item.config.required,
+                      text,
+                      _showLocationSettings,
+                    );
+                  } else {
+                    if (kDebugMode) {
+                      print(
+                        '[flutter-force-permission] WARN: Unsupported Permission with service $perm found.',
+                      );
+                    }
+                    break;
                   }
-                  break;
+
+                  if (item.config.required == PermissionRequiredOption.ask) {
+                    break;
+                  }
+
+                  // ignore: avoid-ignoring-return-values, not needed.
+                  await widget._resumed.stream.firstWhere((element) => element);
+
+                  serviceStatus = await widget._service.serviceStatus(perm);
                 }
-                // ignore: avoid-ignoring-return-values, not needed.
-                await widget._resumed.stream.firstWhere((element) => element);
-                serviceStatus = await widget._service.serviceStatus(perm);
               }
             }
           }
@@ -248,16 +268,23 @@ class _DisclosurePageState extends State<DisclosurePage>
             await widget._service.request(perm);
           }
 
-          if (item.config.required) {
+          if (item.config.required != PermissionRequiredOption.none) {
             // ignore: prefer-moving-to-variable, multiple calls needed to ensure up-to-date data.
             permStatus = await widget._service.status(perm);
             while (permStatus != PermissionStatus.granted) {
               await _showRequiredPermDialog(
+                item.config.required,
                 item.config.itemText,
                 _showAppSettings,
               );
+
+              if (item.config.required == PermissionRequiredOption.ask) {
+                break;
+              }
+
               // ignore: avoid-ignoring-return-values, not needed.
               await widget._resumed.stream.firstWhere((element) => element);
+
               // ignore: prefer-moving-to-variable, multiple calls needed to ensure up-to-date data.
               permStatus = await widget._service.status(perm);
             }
@@ -273,6 +300,7 @@ class _DisclosurePageState extends State<DisclosurePage>
   }
 
   Future<void> _showRequiredPermDialog(
+    PermissionRequiredOption option,
     PermissionItemText permConfig,
     VoidCallback openSettings,
   ) async {
@@ -281,6 +309,26 @@ class _DisclosurePageState extends State<DisclosurePage>
     final callback = widget.permissionConfig.showDialogCallback;
 
     if (callback == null) {
+      final actions = <TextButton>[];
+      if (option == PermissionRequiredOption.ask) {
+        actions.add(
+          TextButton(
+            onPressed: navigator.pop,
+            child:
+                Text(dialogConfig?.cancelText ?? '', textAlign: TextAlign.end),
+          ),
+        );
+      }
+      actions.add(
+        TextButton(
+          onPressed: () {
+            openSettings();
+            navigator.pop();
+          },
+          child: Text(dialogConfig?.buttonText ?? '', textAlign: TextAlign.end),
+        ),
+      );
+
       // ignore: avoid-ignoring-return-values, not needed.
       await showDialog(
         context: context,
@@ -294,26 +342,15 @@ class _DisclosurePageState extends State<DisclosurePage>
             content: Text(
               dialogConfig?.text ?? '',
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  openSettings();
-                  navigator.pop();
-                },
-                child: Text(
-                  dialogConfig?.buttonText ?? '',
-                ),
-              ),
-            ],
+            actions: actions,
           ),
         ),
       );
     } else {
       callback(
         context,
-        dialogConfig?.title ?? '',
-        dialogConfig?.text ?? '',
-        dialogConfig?.buttonText ?? '',
+        option,
+        permConfig,
         openSettings,
       );
     }
