@@ -47,6 +47,13 @@ class App extends StatelessWidget {
                 ),
               ),
               PermissionItemConfig(
+                permissions: [Permission.appTrackingTransparency],
+                itemText: PermissionItemText(
+                  header: 'App Tracking Transparency',
+                  rationaleText: 'Rationale for App Tracking Transparency',
+                ),
+              ),
+              PermissionItemConfig(
                 permissions: [Permission.locationWhenInUse],
                 required: true,
                 itemText: PermissionItemText(
