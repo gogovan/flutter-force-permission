@@ -101,6 +101,61 @@ void main() {
     );
   });
 
+  testWidgets('Ask permission', (tester) async {
+    final testStub = MockTestStub();
+    when(testStub.getSharedPreference())
+        .thenAnswer((realInvocation) => Future.value(prefs));
+    when(testStub.request(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.denied));
+    when(testStub.status(Permission.location))
+        .thenAnswer((realInvocation) => Future.value(PermissionStatus.denied));
+    when(testStub.openAppSettings())
+        .thenAnswer((realInvocation) => Future.value());
+
+    await _test(
+      tester,
+      testStub,
+      config: FlutterForcePermissionConfig(
+        title: 'Title',
+        confirmText: 'Confirm',
+        permissionItemConfigs: [
+          PermissionItemConfig(
+            permissions: [
+              Permission.location,
+            ],
+            itemText: PermissionItemText(
+              header: 'Foreground location',
+              rationaleText: 'Rationale',
+              forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
+                title: 'Location required',
+                text: 'Location needed for proper operation',
+                cancelText: 'Cancel',
+                buttonText: 'Settings',
+              ),
+            ),
+            required: PermissionRequiredOption.ask,
+          ),
+        ],
+      ),
+      verification: (resumed) async {
+        verify(testStub.request(Permission.location));
+
+        expect(find.text('Location required'), findsOneWidget);
+        expect(
+          find.text('Location needed for proper operation'),
+          findsOneWidget,
+        );
+        expect(find.text('Cancel'), findsOneWidget);
+        await tester.tap(find.text('Cancel'));
+
+        resumed.add(true);
+        await tester.pump();
+
+        expect(find.text('Settings'), findsNothing);
+      },
+    );
+  });
+
   testWidgets('Required permission denied', (tester) async {
     final testStub = MockTestStub();
     when(testStub.getSharedPreference())
@@ -364,7 +419,7 @@ void main() {
               required: PermissionRequiredOption.required,
             ),
           ],
-          showDialogCallback: (context, dialog, callback) {
+          showDialogCallback: (context, option, config, callback) {
             callback();
           },
         ),

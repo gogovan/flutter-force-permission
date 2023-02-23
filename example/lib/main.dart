@@ -5,6 +5,7 @@ import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/forced_permission_dialog_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
+import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Example for flutter-force-permission.
@@ -55,7 +56,7 @@ class App extends StatelessWidget {
               ),
               PermissionItemConfig(
                 permissions: [Permission.locationWhenInUse],
-                required: true,
+                required: PermissionRequiredOption.required,
                 itemText: PermissionItemText(
                   header: 'Foreground Location',
                   rationaleText: 'Rationale for Foreground location. Required.',
@@ -64,6 +65,7 @@ class App extends StatelessWidget {
                   forcedPermissionDialogConfig: ForcedPermissionDialogConfig(
                     title: 'Please enable location permission',
                     text: 'Please enable location permission for proper usage.',
+                    cancelText: 'Cancel',
                     buttonText: 'Settings',
                   ),
                 ),

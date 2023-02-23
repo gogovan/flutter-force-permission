@@ -220,27 +220,41 @@ class _DisclosurePageState extends State<DisclosurePage>
         if (text != null) {
           for (final Permission perm in item.config.permissions) {
             if (perm is PermissionWithService) {
-              var serviceStatus = await widget._service.serviceStatus(perm);
-              while (serviceStatus == ServiceStatus.disabled) {
-                if (perm == Permission.phone) {
-                  await _showRequiredPermDialog(
-                      item.config.required, text, _showPhoneSettings);
-                } else if (perm == Permission.location ||
-                    perm == Permission.locationAlways ||
-                    perm == Permission.locationWhenInUse) {
-                  await _showRequiredPermDialog(
-                      item.config.required, text, _showLocationSettings);
-                } else {
-                  if (kDebugMode) {
-                    print(
-                      '[flutter-force-permission] WARN: Unsupported Permission with service $perm found.',
+              if (item.config.required != PermissionRequiredOption.none) {
+                var serviceStatus = await widget._service.serviceStatus(perm);
+                while (serviceStatus == ServiceStatus.disabled) {
+                  if (perm == Permission.phone) {
+                    await _showRequiredPermDialog(
+                      item.config.required,
+                      text,
+                      _showPhoneSettings,
                     );
+                  } else if (perm == Permission.location ||
+                      perm == Permission.locationAlways ||
+                      perm == Permission.locationWhenInUse) {
+                    await _showRequiredPermDialog(
+                      item.config.required,
+                      text,
+                      _showLocationSettings,
+                    );
+                  } else {
+                    if (kDebugMode) {
+                      print(
+                        '[flutter-force-permission] WARN: Unsupported Permission with service $perm found.',
+                      );
+                    }
+                    break;
                   }
-                  break;
+
+                  if (item.config.required == PermissionRequiredOption.ask) {
+                    break;
+                  }
+
+                  // ignore: avoid-ignoring-return-values, not needed.
+                  await widget._resumed.stream.firstWhere((element) => element);
+
+                  serviceStatus = await widget._service.serviceStatus(perm);
                 }
-                // ignore: avoid-ignoring-return-values, not needed.
-                await widget._resumed.stream.firstWhere((element) => element);
-                serviceStatus = await widget._service.serviceStatus(perm);
               }
             }
           }
@@ -263,8 +277,14 @@ class _DisclosurePageState extends State<DisclosurePage>
                 item.config.itemText,
                 _showAppSettings,
               );
+
+              if (item.config.required == PermissionRequiredOption.ask) {
+                break;
+              }
+
               // ignore: avoid-ignoring-return-values, not needed.
               await widget._resumed.stream.firstWhere((element) => element);
+
               // ignore: prefer-moving-to-variable, multiple calls needed to ensure up-to-date data.
               permStatus = await widget._service.status(perm);
             }
@@ -293,8 +313,11 @@ class _DisclosurePageState extends State<DisclosurePage>
       if (option == PermissionRequiredOption.ask) {
         actions.add(
           TextButton(
-            onPressed: navigator.pop,
-            child: Text(dialogConfig?.cancelText ?? ''),
+            onPressed: () {
+              navigator.pop();
+            },
+            child:
+                Text(dialogConfig?.cancelText ?? '', textAlign: TextAlign.end),
           ),
         );
       }
@@ -304,9 +327,7 @@ class _DisclosurePageState extends State<DisclosurePage>
             openSettings();
             navigator.pop();
           },
-          child: Text(
-            dialogConfig?.buttonText ?? '',
-          ),
+          child: Text(dialogConfig?.buttonText ?? '', textAlign: TextAlign.end),
         ),
       );
 
@@ -330,7 +351,8 @@ class _DisclosurePageState extends State<DisclosurePage>
     } else {
       callback(
         context,
-        dialogConfig,
+        option,
+        permConfig,
         openSettings,
       );
     }

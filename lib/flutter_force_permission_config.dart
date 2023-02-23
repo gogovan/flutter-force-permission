@@ -1,12 +1,14 @@
 library flutter_force_permission;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_force_permission/forced_permission_dialog_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
+import 'package:flutter_force_permission/permission_item_text.dart';
+import 'package:flutter_force_permission/permission_required_option.dart';
 
 typedef ShowDialogCallback = void Function(
   BuildContext context,
-  ForcedPermissionDialogConfig? dialogConfig,
+  PermissionRequiredOption option,
+  PermissionItemText? permConfig,
   VoidCallback callback,
 );
 
