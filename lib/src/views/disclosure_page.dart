@@ -347,7 +347,7 @@ class _DisclosurePageState extends State<DisclosurePage>
         ),
       );
     } else {
-      callback(
+      await callback(
         context,
         option,
         permConfig,
