@@ -423,7 +423,7 @@ void main() {
               required: PermissionRequiredOption.required,
             ),
           ],
-          showDialogCallback: (context, option, config, callback) {
+          showDialogCallback: (context, option, config, callback) async {
             callback();
           },
         ),
