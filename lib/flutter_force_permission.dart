@@ -26,6 +26,8 @@ class FlutterForcePermission {
 
   bool _showing = false;
 
+  final _requestedInSession = <Permission, bool>{};
+
   /// Show disclosure page.
   ///
   /// This will show the disclosure page according to the provided configuration, and handles requesting permissions.
@@ -57,7 +59,8 @@ class FlutterForcePermission {
         }
         if (perm is PermissionWithService &&
             permissionStatuses[perm]?.serviceStatus == ServiceStatus.disabled &&
-            permConfig.required != PermissionRequiredOption.none) {
+            permConfig.required != PermissionRequiredOption.none &&
+            _requestedInSession[perm] != true) {
           needShow = true;
           break;
         }
@@ -80,6 +83,14 @@ class FlutterForcePermission {
     );
 
     _showing = false;
+
+    for (final permConfig in config.permissionItemConfigs) {
+      for (final perm in permConfig.permissions) {
+        if (permConfig.required != PermissionRequiredOption.required) {
+          _requestedInSession[perm] = true;
+        }
+      }
+    }
 
     // Check for permission status again as it is likely updated.
     return getPermissionStatuses();

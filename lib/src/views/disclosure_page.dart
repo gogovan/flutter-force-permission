@@ -347,6 +347,7 @@ class _DisclosurePageState extends State<DisclosurePage>
         ),
       );
     } else {
+      // ignore: avoid-ignoring-return-values, not needed. Using void failed to build.
       await callback(
         context,
         option,
