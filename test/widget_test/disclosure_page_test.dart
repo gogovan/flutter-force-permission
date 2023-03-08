@@ -425,6 +425,8 @@ void main() {
           ],
           showDialogCallback: (context, option, config, callback) async {
             callback();
+
+            return true;
           },
         ),
         verification: (resumed) async {

@@ -14,10 +14,16 @@ import 'package:permission_handler/permission_handler.dart';
 /// Show permission disclosure page and allows required permissions before user can proceed.
 class FlutterForcePermission {
   /// Constructor. Pass configuration here. Refer to [FlutterForcePermissionConfig] for details.
-  FlutterForcePermission(this.config) : _service = const TestStub();
+  FlutterForcePermission(this.config)
+      : _service = const TestStub(),
+        _requestedInSession = <Permission, bool>{};
 
   @visibleForTesting
-  FlutterForcePermission.stub(this.config, this._service);
+  FlutterForcePermission.stub(
+    this.config,
+    this._service,
+    this._requestedInSession,
+  );
 
   /// Configuration. Refer to [FlutterForcePermissionConfig] for details.
   final FlutterForcePermissionConfig config;
@@ -26,7 +32,10 @@ class FlutterForcePermission {
 
   bool _showing = false;
 
-  final _requestedInSession = <Permission, bool>{};
+  final Map<Permission, bool> _requestedInSession;
+
+  @visibleForTesting
+  Map<Permission, bool> getRequestedInSession() => _requestedInSession;
 
   /// Show disclosure page.
   ///
@@ -35,7 +44,8 @@ class FlutterForcePermission {
   /// Returns a map of Permission and their status after requesting the permissions.
   /// Only permissions specified in the configuration will be included in the return value.
   Future<Map<Permission, PermissionServiceStatus>> show(
-      NavigatorState navigator,) async {
+    NavigatorState navigator,
+  ) async {
     // Check for permissions.
     final permissionStatuses = await getPermissionStatuses();
     if (_showing) return permissionStatuses;
@@ -51,7 +61,7 @@ class FlutterForcePermission {
     for (final permConfig in config.permissionItemConfigs) {
       for (final perm in permConfig.permissions) {
         if (permissionStatuses[perm]?.status != PermissionStatus.granted &&
-            (permConfig.required == PermissionRequiredOption.required) ||
+                (permConfig.required == PermissionRequiredOption.required) ||
             !(permissionStatuses[perm]?.requested ?? true) ||
             (permConfig.required == PermissionRequiredOption.ask &&
                 _requestedInSession[perm] != true)) {
@@ -76,11 +86,10 @@ class FlutterForcePermission {
     // ignore: avoid-ignoring-return-values, not needed.
     await navigator.push(
       MaterialPageRoute(
-        builder: (context) =>
-            DisclosurePage(
-              permissionConfig: config,
-              permissionStatuses: permissionStatuses,
-            ),
+        builder: (context) => DisclosurePage(
+          permissionConfig: config,
+          permissionStatuses: permissionStatuses,
+        ),
       ),
     );
 
@@ -102,11 +111,11 @@ class FlutterForcePermission {
   ///
   /// Only permissions specified in the configuration will be queried and returned.
   Future<Map<Permission, PermissionServiceStatus>>
-  getPermissionStatuses() async {
+      getPermissionStatuses() async {
     final prefs = await _service.getSharedPreference();
     final Map<Permission, PermissionServiceStatus> result = {};
     for (final List<Permission> perms
-    in config.permissionItemConfigs.map((e) => e.permissions)) {
+        in config.permissionItemConfigs.map((e) => e.permissions)) {
       for (final Permission perm in perms) {
         final status = await _service.status(perm);
         final requested = prefs.getBool(getRequestedPrefKey(perm)) ?? false;
