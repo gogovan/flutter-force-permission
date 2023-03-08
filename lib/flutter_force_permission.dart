@@ -57,26 +57,7 @@ class FlutterForcePermission {
       return permissionStatuses;
     }
 
-    var needShow = false;
-    for (final permConfig in config.permissionItemConfigs) {
-      for (final perm in permConfig.permissions) {
-        if (permissionStatuses[perm]?.status != PermissionStatus.granted &&
-                (permConfig.required == PermissionRequiredOption.required) ||
-            !(permissionStatuses[perm]?.requested ?? true) ||
-            (permConfig.required == PermissionRequiredOption.ask &&
-                _requestedInSession[perm] != true)) {
-          needShow = true;
-          break;
-        }
-        if (perm is PermissionWithService &&
-            permissionStatuses[perm]?.serviceStatus == ServiceStatus.disabled &&
-            permConfig.required != PermissionRequiredOption.none &&
-            _requestedInSession[perm] != true) {
-          needShow = true;
-          break;
-        }
-      }
-    }
+    final bool needShow = isShowPermissionPage(permissionStatuses);
 
     if (!needShow) {
       return permissionStatuses;
@@ -105,6 +86,33 @@ class FlutterForcePermission {
 
     // Check for permission status again as it is likely updated.
     return getPermissionStatuses();
+  }
+
+  bool isShowPermissionPage(
+    Map<Permission, PermissionServiceStatus> permissionStatuses,
+  ) {
+    var needShow = false;
+    for (final permConfig in config.permissionItemConfigs) {
+      for (final perm in permConfig.permissions) {
+        if (permissionStatuses[perm]?.status != PermissionStatus.granted &&
+                (permConfig.required == PermissionRequiredOption.required) ||
+            !(permissionStatuses[perm]?.requested ?? true) ||
+            (permConfig.required == PermissionRequiredOption.ask &&
+                _requestedInSession[perm] != true)) {
+          needShow = true;
+          break;
+        }
+        if (perm is PermissionWithService &&
+            permissionStatuses[perm]?.serviceStatus == ServiceStatus.disabled &&
+            permConfig.required != PermissionRequiredOption.none &&
+            _requestedInSession[perm] != true) {
+          needShow = true;
+          break;
+        }
+      }
+    }
+
+    return needShow;
   }
 
   /// Get all permission statuses.
