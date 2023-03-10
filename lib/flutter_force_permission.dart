@@ -14,10 +14,16 @@ import 'package:permission_handler/permission_handler.dart';
 /// Show permission disclosure page and allows required permissions before user can proceed.
 class FlutterForcePermission {
   /// Constructor. Pass configuration here. Refer to [FlutterForcePermissionConfig] for details.
-  FlutterForcePermission(this.config) : _service = const TestStub();
+  FlutterForcePermission(this.config)
+      : _service = const TestStub(),
+        _requestedInSession = <Permission, bool>{};
 
   @visibleForTesting
-  FlutterForcePermission.stub(this.config, this._service);
+  FlutterForcePermission.stub(
+    this.config,
+    this._service,
+    this._requestedInSession,
+  );
 
   /// Configuration. Refer to [FlutterForcePermissionConfig] for details.
   final FlutterForcePermissionConfig config;
@@ -25,6 +31,11 @@ class FlutterForcePermission {
   final TestStub _service;
 
   bool _showing = false;
+
+  final Map<Permission, bool> _requestedInSession;
+
+  @visibleForTesting
+  Map<Permission, bool> getRequestedInSession() => _requestedInSession;
 
   /// Show disclosure page.
   ///
@@ -46,23 +57,7 @@ class FlutterForcePermission {
       return permissionStatuses;
     }
 
-    var needShow = false;
-    for (final permConfig in config.permissionItemConfigs) {
-      for (final perm in permConfig.permissions) {
-        if (permissionStatuses[perm]?.status != PermissionStatus.granted &&
-            (permConfig.required != PermissionRequiredOption.none ||
-                !(permissionStatuses[perm]?.requested ?? true))) {
-          needShow = true;
-          break;
-        }
-        if (perm is PermissionWithService &&
-            permissionStatuses[perm]?.serviceStatus == ServiceStatus.disabled &&
-            permConfig.required != PermissionRequiredOption.none) {
-          needShow = true;
-          break;
-        }
-      }
-    }
+    final bool needShow = isShowPermissionPage(permissionStatuses);
 
     if (!needShow) {
       return permissionStatuses;
@@ -81,8 +76,43 @@ class FlutterForcePermission {
 
     _showing = false;
 
+    for (final permConfig in config.permissionItemConfigs) {
+      for (final perm in permConfig.permissions) {
+        if (permConfig.required != PermissionRequiredOption.required) {
+          _requestedInSession[perm] = true;
+        }
+      }
+    }
+
     // Check for permission status again as it is likely updated.
     return getPermissionStatuses();
+  }
+
+  bool isShowPermissionPage(
+    Map<Permission, PermissionServiceStatus> permissionStatuses,
+  ) {
+    var needShow = false;
+    for (final permConfig in config.permissionItemConfigs) {
+      for (final perm in permConfig.permissions) {
+        if (permissionStatuses[perm]?.status != PermissionStatus.granted &&
+                (permConfig.required == PermissionRequiredOption.required) ||
+            !(permissionStatuses[perm]?.requested ?? true) ||
+            (permConfig.required == PermissionRequiredOption.ask &&
+                _requestedInSession[perm] != true)) {
+          needShow = true;
+          break;
+        }
+        if (perm is PermissionWithService &&
+            permissionStatuses[perm]?.serviceStatus == ServiceStatus.disabled &&
+            permConfig.required != PermissionRequiredOption.none &&
+            _requestedInSession[perm] != true) {
+          needShow = true;
+          break;
+        }
+      }
+    }
+
+    return needShow;
   }
 
   /// Get all permission statuses.

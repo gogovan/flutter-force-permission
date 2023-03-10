@@ -71,7 +71,7 @@ android {
 ## Usage
 
 1. Create an instance of FlutterForcePermission, providing configuration. Refer to documentation
-   for [FlutterForcePermissionConfig] for details.
+   of [FlutterForcePermissionConfig] for configuration details. Use a single instance of `FlutterForcePermission` throughout your app.
 
 ```dart
 

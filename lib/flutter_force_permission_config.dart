@@ -5,7 +5,7 @@ import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
 import 'package:flutter_force_permission/permission_required_option.dart';
 
-typedef ShowDialogCallback = Future<void> Function(
+typedef ShowDialogCallback = Future<bool> Function(
   BuildContext context,
   PermissionRequiredOption option,
   PermissionItemText? permConfig,

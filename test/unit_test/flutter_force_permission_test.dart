@@ -53,6 +53,7 @@ void main() {
 
 Future<void> _test({
   prefRequested = false,
+  prefSessionRequested = false,
   permissionStatus = PermissionStatus.denied,
   serviceStatus = ServiceStatus.enabled,
   permissionRequired = PermissionRequiredOption.none,
@@ -90,7 +91,12 @@ Future<void> _test({
     ],
   );
 
-  final instance = FlutterForcePermission.stub(config, testStub);
+  final Map<Permission, bool> prefSession = {};
+  if (prefSessionRequested) {
+    prefSession[Permission.location] = true;
+  }
+
+  final instance = FlutterForcePermission.stub(config, testStub, prefSession);
   final result = await instance.show(navigator);
 
   if (expectNavigatorPushed) {
