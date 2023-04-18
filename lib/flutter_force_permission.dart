@@ -43,7 +43,9 @@ class FlutterForcePermission {
   /// If the disclosure page is already shown, it will do nothing.
   /// Returns a map of Permission and their status after requesting the permissions.
   /// Only permissions specified in the configuration will be included in the return value.
-  Future<Map<Permission, PermissionServiceStatus>> show(BuildContext context) async {
+  Future<Map<Permission, PermissionServiceStatus>> show(
+    BuildContext context,
+  ) async {
     final navigator = Navigator.of(context);
 
     // Check for permissions.

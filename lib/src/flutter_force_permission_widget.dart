@@ -23,15 +23,14 @@ class FlutterForcePermissionWidget extends StatefulWidget {
 
 class _FlutterForcePermissionWidgetState
     extends State<FlutterForcePermissionWidget> {
-
   @override
   Widget build(BuildContext context) => Scaffold(
-      body: Navigator(
-        key: FlutterForcePermissionWidget.navigatorKey,
-        initialRoute: '/disclosurePage',
-        onGenerateRoute: (settings) => _onGenerateRoute(settings, context),
-      ),
-    );
+        body: Navigator(
+          key: FlutterForcePermissionWidget.navigatorKey,
+          initialRoute: '/disclosurePage',
+          onGenerateRoute: (settings) => _onGenerateRoute(settings, context),
+        ),
+      );
 
   Route _onGenerateRoute(RouteSettings settings, BuildContext outerContext) =>
       settings.name == '/disclosurePage'
@@ -51,6 +50,4 @@ class _FlutterForcePermissionWidgetState
               builder: (context) => const Placeholder(),
               settings: settings,
             );
-
-
 }
