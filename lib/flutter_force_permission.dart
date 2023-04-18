@@ -46,7 +46,7 @@ class FlutterForcePermission {
   Future<Map<Permission, PermissionServiceStatus>> show(
     BuildContext context,
   ) async {
-    final navigator = Navigator.of(context);
+    final navigator = _service.getNavigator(context);
 
     // Check for permissions.
     final permissionStatuses = await getPermissionStatuses();
