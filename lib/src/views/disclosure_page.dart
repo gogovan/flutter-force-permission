@@ -310,31 +310,10 @@ class _DisclosurePageState extends State<DisclosurePage>
     PermissionItemText permConfig,
     VoidCallback openSettings,
   ) async {
-    final navigator = FlutterForcePermissionWidget.navigatorKey.currentState;
     final dialogConfig = permConfig.forcedPermissionDialogConfig;
     final callback = widget.permissionConfig.showDialogCallback;
 
     if (callback == null) {
-      final actions = <TextButton>[];
-      if (option == PermissionRequiredOption.ask) {
-        actions.add(
-          TextButton(
-            onPressed: navigator?.pop,
-            child:
-                Text(dialogConfig?.cancelText ?? '', textAlign: TextAlign.end),
-          ),
-        );
-      }
-      actions.add(
-        TextButton(
-          onPressed: () {
-            openSettings();
-            navigator?.pop();
-          },
-          child: Text(dialogConfig?.buttonText ?? '', textAlign: TextAlign.end),
-        ),
-      );
-
       // ignore: avoid-ignoring-return-values, not needed.
       await showDialog(
         context: context,
@@ -348,7 +327,30 @@ class _DisclosurePageState extends State<DisclosurePage>
             content: Text(
               dialogConfig?.text ?? '',
             ),
-            actions: actions,
+            actions: <TextButton>[
+              if (option == PermissionRequiredOption.ask)
+                TextButton(
+                  onPressed: () {
+                    // Pop from dialog context, only pop the dialog.
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    dialogConfig?.cancelText ?? '',
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+              TextButton(
+                onPressed: () {
+                  openSettings();
+                  // Pop from dialog context, only pop the dialog.
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  dialogConfig?.buttonText ?? '',
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
           ),
         ),
       );

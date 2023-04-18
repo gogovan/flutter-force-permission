@@ -162,22 +162,23 @@ final config = FlutterForcePermissionConfig(
     ),
   ],
   showDialogCallback: (context, option, permConfig, callback) {
-    // Store the navigator to avoid storing contexts across async gaps. See https://stackoverflow.com/a/69512692/11675817 for details.
-    final navigator = Navigator.of(context);
     // Show your dialog.
     showDialog(context: context,
       barrierDismissible: false,
       builder: (context) =>
           WillPopScope(
-            onWillPop: () async => false,
+            onWillPop: () async => false, // Prevent dismissing dialog by tapping outside the dialog or the back button.
             child: AlertDialog(
               title: Text(permConfig.forcedPermissionDialogConfig.title),
               content: Text(permConfig.forcedPermissionDialogConfig.text),
               actions: [
                 TextButton(
                   onPressed: () {
+                    // Remember to invoke `callback` after confirm action to show the OS settings page as appropriate. 
                     callback();
-                    navigator.pop();
+                    // !IMPORTANT!: You MUST use the BuildContext provided by the dialog when using the navigator, NOT the BuildContext provided by the callback.
+                    // Failure of doing so will result in unintended behavior.
+                    Navigator.pop(context);
                   },
                   child: Text(permConfig.forcedPermissionDialogConfig.buttonText),
                 ),
