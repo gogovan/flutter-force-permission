@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_force_permission/flutter_force_permission.dart';
 import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_item_config.dart';
 import 'package:flutter_force_permission/permission_item_text.dart';
 import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
+import 'package:flutter_force_permission/src/flutter_force_permission_widget.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -19,6 +21,7 @@ class DisclosurePage extends StatefulWidget {
     super.key,
     required this.permissionConfig,
     required this.permissionStatuses,
+    this.onDone,
   })  : _service = const TestStub(),
         _resumed = StreamController.broadcast();
 
@@ -28,6 +31,7 @@ class DisclosurePage extends StatefulWidget {
     required this.permissionStatuses,
     required service,
     required resumed,
+    this.onDone,
     super.key,
   })  : _service = service,
         _resumed = resumed;
@@ -37,6 +41,7 @@ class DisclosurePage extends StatefulWidget {
 
   final FlutterForcePermissionConfig permissionConfig;
   final Map<Permission, PermissionServiceStatus> permissionStatuses;
+  final void Function()? onDone;
 
   final TestStub _service;
 
@@ -198,7 +203,7 @@ class _DisclosurePageState extends State<DisclosurePage>
           Container(
             padding: const EdgeInsets.all(16),
             child: ElevatedButton(
-              onPressed: () => _onGrantPermission(context),
+              onPressed: _onGrantPermission,
               style: theme.elevatedButtonTheme.style,
               child: Text(widget.permissionConfig.confirmText),
             ),
@@ -208,8 +213,7 @@ class _DisclosurePageState extends State<DisclosurePage>
     );
   }
 
-  Future<void> _onGrantPermission(BuildContext context) async {
-    final navigator = Navigator.of(context);
+  Future<void> _onGrantPermission() async {
     final prefs = await widget._service.getSharedPreference();
 
     // Request permissions one by one because in some cases requesting
@@ -296,7 +300,9 @@ class _DisclosurePageState extends State<DisclosurePage>
       }
     }
 
-    navigator.pop();
+    final navigator = FlutterForcePermissionWidget.navigatorKey.currentState;
+    navigator?.pop();
+    widget.onDone?.call();
   }
 
   Future<void> _showRequiredPermDialog(
@@ -304,7 +310,7 @@ class _DisclosurePageState extends State<DisclosurePage>
     PermissionItemText permConfig,
     VoidCallback openSettings,
   ) async {
-    final navigator = Navigator.of(context);
+    final navigator = FlutterForcePermissionWidget.navigatorKey.currentState;
     final dialogConfig = permConfig.forcedPermissionDialogConfig;
     final callback = widget.permissionConfig.showDialogCallback;
 
@@ -313,7 +319,7 @@ class _DisclosurePageState extends State<DisclosurePage>
       if (option == PermissionRequiredOption.ask) {
         actions.add(
           TextButton(
-            onPressed: navigator.pop,
+            onPressed: navigator?.pop,
             child:
                 Text(dialogConfig?.cancelText ?? '', textAlign: TextAlign.end),
           ),
@@ -323,7 +329,7 @@ class _DisclosurePageState extends State<DisclosurePage>
         TextButton(
           onPressed: () {
             openSettings();
-            navigator.pop();
+            navigator?.pop();
           },
           child: Text(dialogConfig?.buttonText ?? '', textAlign: TextAlign.end),
         ),

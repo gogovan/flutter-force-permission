@@ -23,6 +23,7 @@ dependencies:
   flutter_force_permission: ^0.1.0
   # Currently this package depends on our `flutter-permission-handler` package to fix an iOS issue.
   # Directly depends on our packages to avoid any pubspec dependency resolving failure.
+  # Track the PR at: https://github.com/Baseflow/flutter-permission-handler/pull/967
   # TODO replace once we upload our packages and our PR merged by Baseflow.
   permission_handler:
      git:
@@ -105,14 +106,12 @@ final perm = FlutterForcePermission(
 ```
 
 2. Show the disclosure page as needed. This method will handle showing the disclosure page and
-   requesting permissions. This function takes
-   a [NavigatorState](https://api.flutter.dev/flutter/widgets/NavigatorState-class.html) which can
-   be retrieved through `Navigator.of(context)` call. This is an async function. Wrap the function
+   requesting permissions. This function takes a `BuildContext`. This is an async function. Wrap the function
    in an `async` block as needed. Returns a map of permission and their requested status (
    granted/denied/etc), service status and whether they are requested by this plugin.
 
 ```dart
-final result = await perm.show(Navigator.of(context));
+final result = await perm.show(context);
 ```
 
 ### Styling
