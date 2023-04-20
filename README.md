@@ -23,6 +23,7 @@ dependencies:
   flutter_force_permission: ^0.1.0
   # Currently this package depends on our `flutter-permission-handler` package to fix an iOS issue.
   # Directly depends on our packages to avoid any pubspec dependency resolving failure.
+  # Track the PR at: https://github.com/Baseflow/flutter-permission-handler/pull/967
   # TODO replace once we upload our packages and our PR merged by Baseflow.
   permission_handler:
      git:
@@ -105,14 +106,12 @@ final perm = FlutterForcePermission(
 ```
 
 2. Show the disclosure page as needed. This method will handle showing the disclosure page and
-   requesting permissions. This function takes
-   a [NavigatorState](https://api.flutter.dev/flutter/widgets/NavigatorState-class.html) which can
-   be retrieved through `Navigator.of(context)` call. This is an async function. Wrap the function
+   requesting permissions. This function takes a `BuildContext`. This is an async function. Wrap the function
    in an `async` block as needed. Returns a map of permission and their requested status (
    granted/denied/etc), service status and whether they are requested by this plugin.
 
 ```dart
-final result = await perm.show(Navigator.of(context));
+final result = await perm.show(context);
 ```
 
 ### Styling
@@ -163,22 +162,23 @@ final config = FlutterForcePermissionConfig(
     ),
   ],
   showDialogCallback: (context, option, permConfig, callback) {
-    // Store the navigator to avoid storing contexts across async gaps. See https://stackoverflow.com/a/69512692/11675817 for details.
-    final navigator = Navigator.of(context);
     // Show your dialog.
     showDialog(context: context,
       barrierDismissible: false,
       builder: (context) =>
           WillPopScope(
-            onWillPop: () async => false,
+            onWillPop: () async => false, // Prevent dismissing dialog by tapping outside the dialog or the back button.
             child: AlertDialog(
               title: Text(permConfig.forcedPermissionDialogConfig.title),
               content: Text(permConfig.forcedPermissionDialogConfig.text),
               actions: [
                 TextButton(
                   onPressed: () {
+                    // Remember to invoke `callback` after confirm action to show the OS settings page as appropriate. 
                     callback();
-                    navigator.pop();
+                    // !IMPORTANT!: You MUST use the BuildContext provided by the dialog when using the navigator, NOT the BuildContext provided by the callback.
+                    // Failure of doing so will result in unintended behavior.
+                    Navigator.pop(context);
                   },
                   child: Text(permConfig.forcedPermissionDialogConfig.buttonText),
                 ),

@@ -14,12 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'flutter_force_permission_test.mocks.dart';
 
-@GenerateMocks([NavigatorState, TestStub, SharedPreferences])
+@GenerateMocks([BuildContext, NavigatorState, TestStub, SharedPreferences])
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final navigator = MockNavigatorState();
-  when(navigator.push(any)).thenAnswer((realInvocation) => Future.value());
 
   test('Show disclosure page', () async {
     await _test();
@@ -59,6 +56,7 @@ Future<void> _test({
   permissionRequired = PermissionRequiredOption.none,
   expectNavigatorPushed = true,
 }) async {
+  final context = MockBuildContext();
   final navigator = MockNavigatorState();
   when(navigator.push(any)).thenAnswer((realInvocation) => Future.value());
 
@@ -73,6 +71,8 @@ Future<void> _test({
       .thenAnswer((realInvocation) => Future.value(serviceStatus));
   when(testStub.getSharedPreference())
       .thenAnswer((realInvocation) => Future.value(prefs));
+  when(testStub.getNavigator(context))
+      .thenAnswer((realInvocation) => navigator);
 
   final config = FlutterForcePermissionConfig(
     title: 'Title',
@@ -97,7 +97,7 @@ Future<void> _test({
   }
 
   final instance = FlutterForcePermission.stub(config, testStub, prefSession);
-  final result = await instance.show(navigator);
+  final result = await instance.show(context);
 
   if (expectNavigatorPushed) {
     verify(navigator.push(any));

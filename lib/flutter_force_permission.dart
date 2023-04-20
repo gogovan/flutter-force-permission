@@ -5,8 +5,8 @@ import 'package:flutter_force_permission/flutter_force_permission_config.dart';
 import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
+import 'package:flutter_force_permission/src/flutter_force_permission_widget.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
-import 'package:flutter_force_permission/src/views/disclosure_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Flutter Force Permission
@@ -44,8 +44,10 @@ class FlutterForcePermission {
   /// Returns a map of Permission and their status after requesting the permissions.
   /// Only permissions specified in the configuration will be included in the return value.
   Future<Map<Permission, PermissionServiceStatus>> show(
-    NavigatorState navigator,
+    BuildContext context,
   ) async {
+    final navigator = _service.getNavigator(context);
+
     // Check for permissions.
     final permissionStatuses = await getPermissionStatuses();
     if (_showing) return permissionStatuses;
@@ -67,7 +69,8 @@ class FlutterForcePermission {
     // ignore: avoid-ignoring-return-values, not needed.
     await navigator.push(
       MaterialPageRoute(
-        builder: (context) => DisclosurePage(
+        settings: const RouteSettings(name: '/disclosurePage'),
+        builder: (context) => FlutterForcePermissionWidget(
           permissionConfig: config,
           permissionStatuses: permissionStatuses,
         ),
