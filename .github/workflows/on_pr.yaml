@@ -18,8 +18,8 @@ jobs:
 
       - name: Check code is formatted
         run: |
-          flutter format lib --output=none --set-exit-if-changed
-          flutter format test --output=none --set-exit-if-changed
+          dart format lib --output=none --set-exit-if-changed
+          dart format test --output=none --set-exit-if-changed
 
       - name: Analyze code
         run: flutter analyze --fatal-infos --fatal-warnings
