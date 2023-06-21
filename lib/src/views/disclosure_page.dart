@@ -8,7 +8,6 @@ import 'package:flutter_force_permission/permission_item_text.dart';
 import 'package:flutter_force_permission/permission_required_option.dart';
 import 'package:flutter_force_permission/permission_service_status.dart';
 import 'package:flutter_force_permission/src/flutter_force_permission_util.dart';
-import 'package:flutter_force_permission/src/flutter_force_permission_widget.dart';
 import 'package:flutter_force_permission/src/test_stub.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -299,8 +298,6 @@ class _DisclosurePageState extends State<DisclosurePage>
       }
     }
 
-    final navigator = FlutterForcePermissionWidget.navigatorKey.currentState;
-    navigator?.pop();
     widget.onDone?.call();
   }
 
