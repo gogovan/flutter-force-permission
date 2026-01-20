@@ -6,7 +6,7 @@ homepage: https://gogovan.hk
 publish_to: none
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
+  sdk: ">=2.18.4 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -23,7 +23,7 @@ dependencies:
       url: https://github.com/gogovan/flutter-permission-handler.git
       ref: master
       path: permission_handler_apple
-  app_settings: ^4.1.8
+  app_settings: ^7.0.0
   shared_preferences: ^2.0.15
 
 dependency_overrides:
