@@ -1,37 +1,22 @@
 name: flutter_force_permission
 description: Show permission disclosure page and allows required permissions before user can proceed.
-version: 0.2.0
+version: 0.2.1
 homepage: https://gogovan.hk
 
 publish_to: none
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
-  flutter: ">=1.17.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   meta: ^1.8.0
-  permission_handler:
-    git:
-      url: https://github.com/gogovan/flutter-permission-handler.git
-      ref: master
-      path: permission_handler
-  permission_handler_apple:
-    git:
-      url: https://github.com/gogovan/flutter-permission-handler.git
-      ref: master
-      path: permission_handler_apple
-  app_settings: ^4.1.8
+  # Use official version instead of fork to fix v1 embedding issues
+  permission_handler: ^12.0.1
+  app_settings: ^7.0.0
   shared_preferences: ^2.0.15
-
-dependency_overrides:
-  permission_handler_apple:
-    git:
-      url: https://github.com/gogovan/flutter-permission-handler.git
-      ref: master
-      path: permission_handler_apple
 
 dev_dependencies:
   flutter_test:

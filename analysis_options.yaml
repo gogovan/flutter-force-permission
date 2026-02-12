@@ -46,7 +46,7 @@ linter:
     # Error rules:
     always_use_package_imports: true # Avoid relative imports for files in lib/.
     avoid_dynamic_calls: false # Avoid method calls or property accesses on a “dynamic” target.
-    avoid_returning_null_for_future: true # Avoid returning null for Future.
+
     avoid_type_to_string: true # Avoid .toString() in production code since results may be minified.
     cancel_subscriptions: true # Cancel instances of dart.async.StreamSubscription.
     close_sinks: true # Close instances of dart.core.Sink.
@@ -59,7 +59,6 @@ linter:
     test_types_in_equals: true # Test type arguments in operator ==(Object other).
     throw_in_finally: true # Avoid throw in finally block.
     unnecessary_statements: true # Avoid using unnecessary statements.
-    unsafe_html: true # Avoid unsafe HTML APIs.
 
     # Style rules:
     always_declare_return_types: true # Declare method return types.
@@ -81,7 +80,6 @@ linter:
     avoid_positional_boolean_parameters: true # Avoid positional boolean parameters.
     avoid_private_typedef_functions: true # Avoid private typedef functions.
     avoid_redundant_argument_values: true # Avoid redundant argument values.
-    avoid_returning_null: true # Avoid returning null from members whose return type is bool, double, int, or num.
     avoid_returning_this: true # Avoid returning this from methods just to enable a fluent interface.
     avoid_setters_without_getters: true # Avoid setters without getters.
     avoid_types_on_closure_parameters: false # Avoid annotating types for function expression parameters.
@@ -106,7 +104,7 @@ linter:
     omit_local_variable_types: false # Omit type annotations for local variables.
     one_member_abstracts: false # Avoid defining a one-member abstract class when a simple function will do.
     only_throw_errors: true # Only throw instances of classes extending either Exception or Error.
-    package_api_docs: false # Provide doc comments for all public APIs.
+
     parameter_assignments: true # Don’t reassign references to parameters of functions or methods.
     prefer_asserts_with_message: true # Prefer asserts with message.
     prefer_constructors_over_static_methods: true # Prefer defining constructors instead of static methods to create instances.
@@ -155,7 +153,6 @@ linter:
     sort_pub_dependencies: false # Sort pub dependencies alphabetically.
 
 dart_code_metrics:
-
   metrics:
     cyclomatic-complexity: 20 # Number of linearly independent paths through a block of code. Conditional operators or loops increases the number of paths in a code. The more paths, the higher the number of test cases that need to be implemented.
     halstead-volume: 1500 # The Halstead metrics are based on the numbers of operators and operands.
@@ -196,7 +193,7 @@ dart_code_metrics:
     - avoid-non-ascii-symbols # Warns when a string literal contains non ascii characters. This might indicate that the string was not localized.
     - avoid-non-null-assertion # Warns when non null assertion operator (! or “bang” operator) is used for a property access or method invocation. The operator check works at runtime and it may fail and throw a runtime exception.
     - avoid-throw-in-catch-block # Call throw in a catch block loses the original stack trace and the original exception.
-#    - avoid-top-level-members-in-tests # Warns when a public top-level member (expect the entrypoint) is declared inside a test file. // Won't do, got issue for this rule as it will include non-test files, which is not expected.
+    #    - avoid-top-level-members-in-tests # Warns when a public top-level member (expect the entrypoint) is declared inside a test file. // Won't do, got issue for this rule as it will include non-test files, which is not expected.
     - avoid-unnecessary-type-assertions # Warns about unnecessary usage of is and whereType operators.
     - avoid-unnecessary-type-casts # Warns about of unnecessary use of casting operators.
     - avoid-unrelated-type-assertions # Warns about unrelated usages of is operator.
@@ -227,13 +224,13 @@ dart_code_metrics:
           - lib/models/**
           - lib/utils/**
           - lib/models/**
-        allowed: [ 0, 1 ]
+        allowed: [0, 1]
     - no-object-declaration # Warns when a class member is declared with Object type.
     - prefer-async-await # Recommends to use async/await syntax to handle Futures result instead of .then() invocation. Also can help prevent errors with mixed await and .then() usages, since awaiting the result of a Future with .then() invocation awaits the completion of .then().
     - prefer-commenting-analyzer-ignores # Warns when // ignore: comments are left without any additional description why this ignore is applied.
     - prefer-conditional-expressions # Recommends to use a conditional expression instead of assigning to the same thing or return statement in each branch of an if statement.
     - prefer-correct-identifier-length: # The rule checks the length of variable names in classes, functions, extensions, mixins, and also checks the value of enum.
-        exceptions: [ 'e', 'i', 'j', 'k', 'kg', 'cm', 'id' ]
+        exceptions: ["e", "i", "j", "k", "kg", "cm", "id"]
         max-identifier-length: 30
         min-identifier-length: 3
     - prefer-correct-type-name: # Rule checks that the type name should only contain alphanumeric characters, start with an uppercase character and span between min-length and max-length characters in length.

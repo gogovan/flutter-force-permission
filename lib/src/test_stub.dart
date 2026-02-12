@@ -16,7 +16,8 @@ class TestStub {
 
   Future<void> openAppSettings() => AppSettings.openAppSettings();
 
-  Future<void> openLocationSettings() => AppSettings.openLocationSettings();
+  Future<void> openLocationSettings() =>
+      AppSettings.openAppSettings(type: AppSettingsType.location);
 
   Future<PermissionStatus> request(Permission permission) =>
       permission.request();
