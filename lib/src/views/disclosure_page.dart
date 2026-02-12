@@ -314,8 +314,8 @@ class _DisclosurePageState extends State<DisclosurePage>
       await showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => WillPopScope(
-          onWillPop: () async => false,
+        builder: (context) => PopScope(
+          canPop: false,
           child: AlertDialog(
             title: Text(
               dialogConfig?.title ?? '',
